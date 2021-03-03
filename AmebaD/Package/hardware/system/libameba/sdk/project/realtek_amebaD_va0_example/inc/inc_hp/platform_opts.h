@@ -25,7 +25,19 @@
 #define LOG_HISTORY_LEN    5
 #endif
 #define CONFIG_ATCMD_MP				1 //support MP AT command
+#define SUPPORT_INTERACTIVE_MODE		0//on/off wifi_interactive_mode
 #define CONFIG_LOG_SERVICE_LOCK 0
+#endif
+
+/**
+ * For interactive mode configurations, depents on log service
+ */
+#if SUPPORT_INTERACTIVE_MODE
+#define CONFIG_INTERACTIVE_MODE     1
+#define CONFIG_INTERACTIVE_EXT   0
+#else
+#define CONFIG_INTERACTIVE_MODE     0
+#define CONFIG_INTERACTIVE_EXT   0
 #endif
 
 /**
@@ -143,9 +155,29 @@
 /*******************************************************************************/
 
 /**
- * For CONFIG_INIC_IPC configurations
+ * For iNIC configurations
  */
-#if defined (CONFIG_INIC_IPC) && CONFIG_INIC_IPC
+//#define CONFIG_INIC_EN 0//enable iNIC mode
+#if defined(CONFIG_INIC_EN) && CONFIG_INIC_EN
+#ifndef CONFIG_LWIP_LAYER
+#define CONFIG_LWIP_LAYER	0
+#endif
+#ifndef CONFIG_INIC_SDIO_HCI
+#define CONFIG_INIC_SDIO_HCI	0 //for SDIO or USB iNIC
+#endif
+#ifndef CONFIG_INIC_CMD_RSP
+#define CONFIG_INIC_CMD_RSP	0
+#endif
+#ifndef CONFIG_INIC_USB_HCI
+#define CONFIG_INIC_USB_HCI	0
+#endif
+#endif
+/******************End of iNIC configurations*******************/
+
+/**
+ * For CONFIG_LWIP_LAYER_OFF configurations
+ */
+#if defined (CONFIG_LWIP_LAYER_OFF) && CONFIG_LWIP_LAYER_OFF
 #define CONFIG_ATCMD_MP				0 //support MP AT command
 #define CONFIG_LWIP_LAYER	0
 #define CONFIG_INIT_NET		0 //init lwip layer when start up
@@ -217,7 +249,7 @@
 #define CONFIG_EXAMPLE_XML				0
 
 /* For socket select example */
-#define CONFIG_EXAMPLE_SOCKET_SELECT	0
+#define CONFIG_EXAMPLE_SOCKET_SELECT	1
 
 /* For socket nonblocking connect example */
 #define CONFIG_EXAMPLE_NONBLOCK_CONNECT	0
@@ -538,6 +570,9 @@ in lwip_opt.h for support uart adapter*/
 #if defined(CONFIG_INIC_EN) && CONFIG_INIC_EN
 #undef CONFIG_INCLUDE_SIMPLE_CONFIG
 #define CONFIG_INCLUDE_SIMPLE_CONFIG	0
+#define SUPPORT_INTERACTIVE_MODE		0
+#define CONFIG_INTERACTIVE_MODE		0
+#define CONFIG_INTERACTIVE_EXT			0
 #define CONFIG_OTA_UPDATE				0
 #endif
 
@@ -599,14 +634,6 @@ in lwip_opt.h for support uart adapter*/
 #define CONFIG_EXAMPLE_USBH_VENDOR      1
 #endif
 
-#if defined(CONFIG_USBH_CDC_ACM)
-#if defined(CONFIG_USBH_CDC_ACM_VERIFY)
-#define CONFIG_EXAMPLE_USBH_CDC_ACM_VERIFY 1
-#else
-#define CONFIG_EXAMPLE_USBH_CDC_ACM      1
-#endif
-#endif
-
 //#define CONFIG_EXAMPLE_COMPETITIVE_HEADPHONES		1
 
 /* For fast DHCP */
@@ -619,18 +646,6 @@ in lwip_opt.h for support uart adapter*/
 // zzw arduino
 /******************  For Arduino SDK customize config   *******************/
 #ifdef ARDUINO_SDK
-
-/* For FATFS*/
-#define CONFIG_FATFS_EN	1
-#if CONFIG_FATFS_EN
-// fatfs version
-#define FATFS_R_10C
-// fatfs disk interface
-#define FATFS_DISK_USB	0
-#define FATFS_DISK_SD 	1
-#define FATFS_DISK_FLASH 	0
-#endif
-
 #endif
 /****************** End of Arduino SDK customize config *******************/
 

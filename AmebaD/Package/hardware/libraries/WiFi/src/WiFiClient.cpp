@@ -12,6 +12,7 @@ extern "C" {
 #include "WiFiServer.h"
 #include "server_drv.h"
 
+#define EXAMPLE_IPV6
 
 WiFiClient::WiFiClient() : _sock(MAX_SOCK_NUM) {
     _is_connected = false;
@@ -142,14 +143,26 @@ WiFiClient::operator bool() {
 
 int WiFiClient::connect(const char* host, uint16_t port) {
     IPAddress remote_addr;
-
-    if (WiFi.hostByName(host, remote_addr)) {
+    IPv6Address remote_addr_v6;
+    printf("[INFO]WiFiClient.cpp: connect0() host address  :     %s \n\r", host);
+    /*if (WiFi.hostByName(host, remote_addr)) {
+        printf("[INFO]WiFiClient.cpp: connect0() remote_addr  :     %x\n\r",remote_addr);
+        return connect(remote_addr, port);
+    }*/
+    #ifndef EXAMPLE_IPV6
+    if(WiFi.hostByName(host, remote_addr)){
         return connect(remote_addr, port);
     }
+    #else
+    if(WiFi.hostByNamev6(host, remote_addr_v6)){
+        return connectv6(remote_addr_v6, port);
+    }
+    #endif
     return 0;
 }
 
 int WiFiClient::connect(IPAddress ip, uint16_t port) {
+    printf("[INFO]WiFiClient.cpp: connect1 \n\r");
     _is_connected = false;
     _sock = clientdrv.startClient(ip, port);
 
@@ -162,6 +175,24 @@ int WiFiClient::connect(IPAddress ip, uint16_t port) {
     }
     return 1;
 }
+
+int WiFiClient::connectv6(IPv6Address ipv6, uint16_t port) {
+    printf("[INFO]wifiClient.cpp: connect2 \n\r");
+    _is_connected = false;
+    _sock = clientdrv.startClientv6(ipv6, port);
+    printf("[INFO]wifiClient.cpp:  sock value: %x\n\r",_sock);
+     if (_sock < 0) {
+        _is_connected = false;
+        printf("[INFO]wifiClient.cpp:  connect false\n\r");
+        return 0;
+    } else {
+        _is_connected = true;
+        printf("[INFO]wifiClient.cpp:  connect true\n\r");
+        clientdrv.setSockRecvTimeout(_sock, recvTimeout);
+    }
+    return 1;
+}
+
 
 int WiFiClient::peek() {
     uint8_t b;
@@ -195,3 +226,20 @@ int WiFiClient::read(char *buf, size_t size) {
 
     return 0;
 }
+
+void WiFiClient::TCPClientv6(void){
+    clientdrv.setIPv6TCPClient();
+}
+
+void WiFiClient::TCPServerv6(void){
+    clientdrv.setIPv6TCPServer();
+}
+
+void WiFiClient::UDPClientv6(void){
+    clientdrv.setIPv6UDPClient();
+}
+
+void WiFiClient::UDPServerv6(void){
+    clientdrv.setIPv6UDPServer();
+}
+

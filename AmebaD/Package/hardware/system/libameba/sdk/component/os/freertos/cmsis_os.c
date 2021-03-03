@@ -4,9 +4,7 @@
 #include "diag.h"
 
 // zzw arduino
-#if defined(ARDUINO_SDK)
 #include "cmsis_gcc.h"
-#endif
 
 #define CMSIS_OS_ERR(fmt, args...)          _DbgDump("\n\r%s: " fmt, __FUNCTION__, ## args)
 

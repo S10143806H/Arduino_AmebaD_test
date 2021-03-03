@@ -148,20 +148,6 @@ int wext_set_group_id(const char *ifname, __u8 value)
 
 	return ret;
 }
-
-int wext_set_support_wpa3(__u8 enable)
-{
-	extern u8 rtw_cmd_tsk_spt_wap3;
-	rtw_cmd_tsk_spt_wap3 = enable;
-	return 0;
-}
-
-unsigned char wext_get_support_wpa3(void)
-{
-	extern u8 rtw_cmd_tsk_spt_wap3;
-	return rtw_cmd_tsk_spt_wap3;
-}
-
 #endif
 
 #ifdef CONFIG_PMKSA_CACHING
@@ -1602,8 +1588,6 @@ int wext_list_mac_filter(void)
 		item = list_entry(iterator, rtw_mac_filter_list_t, node);
 		printf("%d: "MAC_FMT"\r\n", i++, MAC_ARG(item->mac_addr));
 	}
-
-	return 0;
 exit:
 	if(i==0)
 		printf("No MAC filter!\r\n");

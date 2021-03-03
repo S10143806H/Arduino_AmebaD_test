@@ -4,6 +4,7 @@
 #include "Print.h"
 #include "Client.h"
 #include "IPAddress.h"
+#include "IPv6Address.h"
 #include "server_drv.h"
 
 class WiFiClient : public Client {
@@ -13,6 +14,7 @@ class WiFiClient : public Client {
 
         uint8_t status();
         virtual int connect(IPAddress ip, uint16_t port);
+        virtual int connectv6(IPv6Address ipv6, uint16_t port);
         virtual int connect(const char *host, uint16_t port);
         virtual size_t write(uint8_t);
         virtual size_t write(const uint8_t *buf, size_t size);
@@ -24,7 +26,10 @@ class WiFiClient : public Client {
         virtual void stop();
         virtual uint8_t connected();
         virtual operator bool();
-
+        void TCPClientv6(void);
+        void TCPServerv6(void);
+        void UDPClientv6(void);
+        void UDPServerv6(void);
         friend class WiFiServer;
 
         using Print::write;

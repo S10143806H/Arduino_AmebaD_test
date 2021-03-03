@@ -430,9 +430,6 @@ extern void __libc_init_array(void);
 	app_mpu_nocache_init();
 	app_vdd1833_detect();
 	memcpy_gdma_init();
-#if defined(CONFIG_INIC_IPC) && CONFIG_INIC_IPC
-	DCache_Disable();
-#endif
 	//retention Ram space should not exceed 0xB0
 	assert_param(sizeof(RRAM_TypeDef) <= 0xB0);
 

@@ -205,9 +205,7 @@ void wifi_indication( rtw_event_indicate_t event, char *buf, int buf_len, int fl
 	}
 
 #if CONFIG_INIC_EN
-#ifndef CONFIG_INIC_IPC
 	inic_indicate_event(event, buf, buf_len, flags);
-#endif
 #endif//CONFIG_INIC_EN
 
 #if CONFIG_WIFI_IND_USE_THREAD

@@ -539,20 +539,9 @@ void do_ssl_connect(void)
 void cmd_ssl_client(int argc, char **argv)
 {
 	if(argc == 2 || argc == 3) {
-		if (strlen(argv[1]) <= sizeof(server_host) - 1) {
-			strcpy(server_host, argv[1]);
-		} else {
-			printf("failed\r\n argv[1]--%s is too long for server_host", argv[1]);
-			return;
-		}
-		if (argc == 3) {
-			if (strlen(argv[2]) <= sizeof(server_port) - 1) {
-				strcpy(server_port, argv[2]);
-			} else {
-				printf("failed\r\n argv[2]--%s is too long for server_port", argv[2]);
-				return;
-			}
-		}
+		strcpy(server_host, argv[1]);
+		if(argc == 3)
+			strcpy(server_port, argv[2]);
 		else
 			strcpy(server_port, SERVER_PORT);
 	}

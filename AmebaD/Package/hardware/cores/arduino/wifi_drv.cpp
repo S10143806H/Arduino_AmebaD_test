@@ -1,5 +1,8 @@
 #include "wifi_drv.h"
 
+//#define EXAMPLE_IPV6
+
+
 // arduino includes
 #include "wl_definitions.h"
 #include "wl_types.h"
@@ -15,6 +18,8 @@ extern "C" {
 #include "wifi_structures.h"
 #include "lwip_netconf.h"
 #include "lwip/err.h"
+// modifed here
+#include "lwip/netif.h"
 #include "lwip/api.h"
 #include <dhcp/dhcps.h>
 
@@ -109,10 +114,28 @@ int8_t WiFiDrv::wifiSetNetwork(char* ssid, uint8_t ssid_len)
             struct ip_addr netmask;
             struct ip_addr gw;
             struct netif * pnetif = &xnetif[0];
-            IP4_ADDR(&ipaddr, _arduinoIpAddr[0], _arduinoIpAddr[1], _arduinoIpAddr[2], _arduinoIpAddr[3]);
+            /*IP4_ADDR(&ipaddr, _arduinoIpAddr[0], _arduinoIpAddr[1], _arduinoIpAddr[2], _arduinoIpAddr[3]);
             IP4_ADDR(&netmask, _arduinoNetmaskAddr[0], _arduinoNetmaskAddr[1], _arduinoNetmaskAddr[2], _arduinoNetmaskAddr[3]);
             IP4_ADDR(&gw, _arduinoGwAddr[0], _arduinoGwAddr[1], _arduinoGwAddr[2], _arduinoGwAddr[3]);
-            netif_set_addr(pnetif, &ipaddr, &netmask,&gw);
+            netif_set_addr(pnetif, &ipaddr, &netmask,&gw);    
+            return WL_SUCCESS;
+            */
+            // modified here
+            #ifndef EXAMPLE_IPV6 
+            printf("IPv6 is disabled\n\r");
+            IP4_ADDR(ip_2_ip4(&ipaddr), _arduinoIpAddr[0], _arduinoIpAddr[1], _arduinoIpAddr[2], _arduinoIpAddr[3]);
+            IP4_ADDR(ip_2_ip4(&netmask), _arduinoNetmaskAddr[0], _arduinoNetmaskAddr[1], _arduinoNetmaskAddr[2], _arduinoNetmaskAddr[3]);
+            IP4_ADDR(ip_2_ip4(&gw), _arduinoGwAddr[0], _arduinoGwAddr[1], _arduinoGwAddr[2], _arduinoGwAddr[3]);
+            netif_set_addr(pnetif, ip_2_ip4(&ipaddr), ip_2_ip4(&netmask),ip_2_ip4(&gw));
+            #else
+            printf("IPv6 is enabled\n\r");
+            IP6_ADDR(ip_2_ip6(&ipaddr), _arduinoIpAddr[0], _arduinoIpAddr[1], _arduinoIpAddr[2], _arduinoIpAddr[3]);
+            IP6_ADDR(ip_2_ip6(&netmask), _arduinoNetmaskAddr[0], _arduinoNetmaskAddr[1], _arduinoNetmaskAddr[2], _arduinoNetmaskAddr[3]);
+            IP6_ADDR(ip_2_ip6(&gw), _arduinoGwAddr[0], _arduinoGwAddr[1], _arduinoGwAddr[2], _arduinoGwAddr[3]);
+            // requires to modify this line
+            // netif.h
+            netif_ip6_addr_set(pnetif,3,ip_2_ip6(&ipaddr));            
+            #endif
             return WL_SUCCESS;
         } else {
             dhcp_result = LwIP_DHCP(0, DHCP_START);
@@ -157,10 +180,25 @@ int8_t WiFiDrv::wifiSetPassphrase(char* ssid, uint8_t ssid_len, const char *pass
             struct ip_addr netmask;
             struct ip_addr gw;
             struct netif * pnetif = &xnetif[0];
-            IP4_ADDR(&ipaddr, _arduinoIpAddr[0], _arduinoIpAddr[1], _arduinoIpAddr[2], _arduinoIpAddr[3]);
+            /*IP4_ADDR(&ipaddr, _arduinoIpAddr[0], _arduinoIpAddr[1], _arduinoIpAddr[2], _arduinoIpAddr[3]);
             IP4_ADDR(&netmask, _arduinoNetmaskAddr[0], _arduinoNetmaskAddr[1], _arduinoNetmaskAddr[2], _arduinoNetmaskAddr[3]);
             IP4_ADDR(&gw, _arduinoGwAddr[0], _arduinoGwAddr[1], _arduinoGwAddr[2], _arduinoGwAddr[3]);
             netif_set_addr(pnetif, &ipaddr, &netmask,&gw);
+            return WL_SUCCESS;*/
+            #ifndef EXAMPLE_IPV6
+            printf("IPv6 is disabled\n\r");
+            IP4_ADDR(ip_2_ip4(&ipaddr), _arduinoIpAddr[0], _arduinoIpAddr[1], _arduinoIpAddr[2], _arduinoIpAddr[3]);
+            IP4_ADDR(ip_2_ip4(&netmask), _arduinoNetmaskAddr[0], _arduinoNetmaskAddr[1], _arduinoNetmaskAddr[2], _arduinoNetmaskAddr[3]);
+            IP4_ADDR(ip_2_ip4(&gw), _arduinoGwAddr[0], _arduinoGwAddr[1], _arduinoGwAddr[2], _arduinoGwAddr[3]);
+            netif_set_addr(pnetif, ip_2_ip4(&ipaddr), ip_2_ip4(&netmask),ip_2_ip4(&gw));
+            #else
+            printf("IPv6 is enabled\n\r");
+            IP6_ADDR(ip_2_ip6(&ipaddr), _arduinoIpAddr[0], _arduinoIpAddr[1], _arduinoIpAddr[2], _arduinoIpAddr[3]);
+            IP6_ADDR(ip_2_ip6(&netmask), _arduinoNetmaskAddr[0], _arduinoNetmaskAddr[1], _arduinoNetmaskAddr[2], _arduinoNetmaskAddr[3]);
+            IP6_ADDR(ip_2_ip6(&gw), _arduinoGwAddr[0], _arduinoGwAddr[1], _arduinoGwAddr[2], _arduinoGwAddr[3]);
+            // requires to modify this line in netif.h
+            netif_ip6_addr_set(pnetif,3,ip_2_ip6(&ipaddr));            
+            #endif
             return WL_SUCCESS;
         } else {
             dhcp_result = LwIP_DHCP(0, DHCP_START);
@@ -229,10 +267,26 @@ int8_t WiFiDrv::wifiSetKey(char* ssid, uint8_t ssid_len, uint8_t key_idx, const 
             struct ip_addr netmask;
             struct ip_addr gw;
             struct netif * pnetif = &xnetif[0];
-            IP4_ADDR(&ipaddr, _arduinoIpAddr[0], _arduinoIpAddr[1], _arduinoIpAddr[2], _arduinoIpAddr[3]);
+            /*IP4_ADDR(&ipaddr, _arduinoIpAddr[0], _arduinoIpAddr[1], _arduinoIpAddr[2], _arduinoIpAddr[3]);
             IP4_ADDR(&netmask, _arduinoNetmaskAddr[0], _arduinoNetmaskAddr[1], _arduinoNetmaskAddr[2], _arduinoNetmaskAddr[3]);
             IP4_ADDR(&gw, _arduinoGwAddr[0], _arduinoGwAddr[1], _arduinoGwAddr[2], _arduinoGwAddr[3]);
             netif_set_addr(pnetif, &ipaddr, &netmask,&gw);
+            return WL_SUCCESS;*/
+            #ifndef EXAMPLE_IPV6
+            printf("IPv6 is disabled\n\r");
+            IP4_ADDR(ip_2_ip4(&ipaddr), _arduinoIpAddr[0], _arduinoIpAddr[1], _arduinoIpAddr[2], _arduinoIpAddr[3]);
+            IP4_ADDR(ip_2_ip4(&netmask), _arduinoNetmaskAddr[0], _arduinoNetmaskAddr[1], _arduinoNetmaskAddr[2], _arduinoNetmaskAddr[3]);
+            IP4_ADDR(ip_2_ip4(&gw), _arduinoGwAddr[0], _arduinoGwAddr[1], _arduinoGwAddr[2], _arduinoGwAddr[3]);
+            netif_set_addr(pnetif, ip_2_ip4(&ipaddr), ip_2_ip4(&netmask),ip_2_ip4(&gw));
+            #else
+            printf("IPv6 is enabled\n\r");
+            IP6_ADDR(ip_2_ip6(&ipaddr), _arduinoIpAddr[0], _arduinoIpAddr[1], _arduinoIpAddr[2], _arduinoIpAddr[3]);
+            IP6_ADDR(ip_2_ip6(&netmask), _arduinoNetmaskAddr[0], _arduinoNetmaskAddr[1], _arduinoNetmaskAddr[2], _arduinoNetmaskAddr[3]);
+            IP6_ADDR(ip_2_ip6(&gw), _arduinoGwAddr[0], _arduinoGwAddr[1], _arduinoGwAddr[2], _arduinoGwAddr[3]);
+            // requires to modify this line
+            // netif.h
+            netif_ip6_addr_set(pnetif,3,ip_2_ip6(&ipaddr));            
+            #endif
             return WL_SUCCESS;
         } else {
             dhcp_result = LwIP_DHCP(0, DHCP_START);
@@ -306,11 +360,26 @@ int8_t WiFiDrv::apActivate(uint8_t hidden_ssid)
 
 #if CONFIG_LWIP_LAYER
     dhcps_deinit();
-    IP4_ADDR(&ipaddr, _arduinoApIpAddr[0], _arduinoApIpAddr[1], _arduinoApIpAddr[2], _arduinoApIpAddr[3]);
+    /*IP4_ADDR(&ipaddr, _arduinoApIpAddr[0], _arduinoApIpAddr[1], _arduinoApIpAddr[2], _arduinoApIpAddr[3]);
     IP4_ADDR(&netmask, _arduinoApNetmaskAddr[0], _arduinoApNetmaskAddr[1], _arduinoApNetmaskAddr[2], _arduinoApNetmaskAddr[3]);
     IP4_ADDR(&gw, _arduinoApGwAddr[0], _arduinoApGwAddr[1], _arduinoApGwAddr[2], _arduinoApGwAddr[3]);
-    netif_set_addr(pnetif, &ipaddr, &netmask,&gw);
-#endif
+    netif_set_addr(pnetif, &ipaddr, &netmask,&gw);*/
+    #ifndef EXAMPLE_IPV6
+            printf("IPv6 is disabled\n\r");
+            IP4_ADDR(ip_2_ip4(&ipaddr), _arduinoIpAddr[0], _arduinoIpAddr[1], _arduinoIpAddr[2], _arduinoIpAddr[3]);
+            IP4_ADDR(ip_2_ip4(&netmask), _arduinoNetmaskAddr[0], _arduinoNetmaskAddr[1], _arduinoNetmaskAddr[2], _arduinoNetmaskAddr[3]);
+            IP4_ADDR(ip_2_ip4(&gw), _arduinoGwAddr[0], _arduinoGwAddr[1], _arduinoGwAddr[2], _arduinoGwAddr[3]);
+            netif_set_addr(pnetif, ip_2_ip4(&ipaddr), ip_2_ip4(&netmask),ip_2_ip4(&gw));
+            #else
+            printf("IPv6 is enabled\n\r");
+            IP6_ADDR(ip_2_ip6(&ipaddr), _arduinoIpAddr[0], _arduinoIpAddr[1], _arduinoIpAddr[2], _arduinoIpAddr[3]);
+            IP6_ADDR(ip_2_ip6(&netmask), _arduinoNetmaskAddr[0], _arduinoNetmaskAddr[1], _arduinoNetmaskAddr[2], _arduinoNetmaskAddr[3]);
+            IP6_ADDR(ip_2_ip6(&gw), _arduinoGwAddr[0], _arduinoGwAddr[1], _arduinoGwAddr[2], _arduinoGwAddr[3]);
+            // requires to modify this line
+            // netif.h
+            netif_ip6_addr_set(pnetif,3,ip_2_ip6(&ipaddr));            
+            #endif
+    #endif
     wifi_off();
     vTaskDelay(20);
     if (wifi_on(RTW_MODE_AP) < 0){
@@ -390,6 +459,12 @@ uint8_t* WiFiDrv::getMacAddress()
 void WiFiDrv::getIpAddress(IPAddress& ip)
 {
     ip = LwIP_GetIP(&xnetif[0]);
+}
+
+void WiFiDrv::getIpv6Address()
+{
+    LwIP_AUTOIP_IPv6(&xnetif[0]);
+    while(!ip6_addr_isvalid(netif_ip6_addr_state(&xnetif[0],0))) vTaskDelay(10);
 }
 
 void WiFiDrv::getSubnetMask(IPAddress& mask)
@@ -519,22 +594,69 @@ char* WiFiDrv::getFwVersion()
 
 int WiFiDrv::getHostByName(const char* aHostname, IPAddress& aResult)
 {
-    ip_addr_t ip_addr;
+    ip_addr_t ip_addr;  
     err_t err;
-    err = netconn_gethostbyname(aHostname, &ip_addr);
-
+    printf("[INFO]wifi_drv.cpp: getHostByName1() IPAddress  :     %x\n\r",aResult);
+    //err = netconn_gethostbyname(aHostname, &ip_addr);
+    err = netconn_gethostbyname_addrtype(aHostname, &ip_addr, NETCONN_DNS_IPV4);
     if (err != ERR_OK) {
+        printf("[INFO]wifi_drv.cpp: netconn_gethostbyname not ok\n\r");
         return WL_FAILURE;
     } else {
-        aResult = ip_addr.addr;
-        return WL_SUCCESS;
+        printf("[INFO]wifi_drv.cpp: netconn_gethostbyname done\n\r");
+       
+        #ifndef EXAMPLE_IPV6
+        aResult = ip_addr.u_addr.ip4.addr;
+        printf("[INFO]wifi_drv.cpp: ipv4 ");
+        #endif
+        printf(" ip address: %x\n\r",aResult);
+        return WL_SUCCESS;    
     }
+}
+
+int WiFiDrv::getHostByNamev6(const char* aHostname, IPv6Address& aResult)
+{
+    ip_addr_t ip_addr;  
+    err_t err;
+    printf("[INFO]wifi_drv.cpp: getHostByName2() IPv6Address  :     %x   \n\r", aResult);
+    err = netconn_gethostbyname_addrtype(aHostname, &ip_addr, NETCONN_DNS_IPV6 );
+
+     //printf("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz 0    %x   \n\r", ip_addr.u_addr.ip6.addr[0]);
+     //printf("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz  1   %x   \n\r", ip_addr.u_addr.ip6.addr[1]);
+    // printf("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz   2  %x   \n\r", ip_addr.u_addr.ip6.addr[2]);
+    // printf("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz    3 %x   \n\r", ip_addr.u_addr.ip6.addr[3]);
+
+     
+     if (err != ERR_OK) {
+        printf("[INFO]wifi_drv.cpp: netconn_gethostbyname not ok\n\r");
+        return WL_FAILURE;
+    } else {
+        printf("[INFO]wifi_drv.cpp: netconn_gethostbyname done\n\r");
+
+  #ifdef EXAMPLE_IPV6
+for (int xx = 0; xx<4; xx++){
+        aResult._address.dword[xx] = ip_addr.u_addr.ip6.addr[xx];
+}
+        printf("[INFO]wifi_drv.cpp: ipv6 \r\n");
+#endif
+      //  printf("0 ip address: %x\n\r", aResult._address.dword[0]);
+      //  printf("1 ip address: %x\n\r", aResult._address.dword[1]);
+      //  printf("2 ip address: %x\n\r", aResult._address.dword[2]);
+      //  printf("3 ip address: %x\n\r", aResult._address.dword[3]);
+        return WL_SUCCESS;
+    }     
 }
 
 int WiFiDrv::disablePowerSave()
 {
     return wifi_disable_powersave();
 }
+
+void WiFiDrv::enableIPv6()
+{
+    #define EXAMPLE_IPV6	1
+}
+
 
 void WiFiDrv::config(uint8_t validParams, IPAddress local_ip, IPAddress gateway, IPAddress subnet) {
 
@@ -571,7 +693,12 @@ void WiFiDrv::setDNS(uint8_t validParams, IPAddress dns_server1, IPAddress dns_s
     } else {
         return;
     }
-    IP4_ADDR(&dns, _arduinoDns1[0], _arduinoDns1[1], _arduinoDns1[2], _arduinoDns1[3]);
+    //IP4_ADDR(&dns, _arduinoDns1[0], _arduinoDns1[1], _arduinoDns1[2], _arduinoDns1[3]);
+    // modified here 
+    #ifndef EXAMPLE_IPV6 
+    IP4_ADDR(ip_2_ip4(&dns), _arduinoDns1[0], _arduinoDns1[1], _arduinoDns1[2], _arduinoDns1[3]);
+    #else
+    IP6_ADDR(ip_2_ip6(&dns), _arduinoDns1[0], _arduinoDns1[1], _arduinoDns1[2], _arduinoDns1[3]);
+    #endif
     LwIP_SetDNS(&dns);
 }
-

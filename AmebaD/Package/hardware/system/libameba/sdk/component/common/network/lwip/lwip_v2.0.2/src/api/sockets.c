@@ -43,7 +43,7 @@
  * Improved by Marc Boucher <marc@mbsi.ca> and David Haas <dhaas@alum.rpi.edu>
  *
  */
-
+//#include "Arduino.h"
 #include "lwip/opt.h"
 
 #if LWIP_SOCKET /* don't build if not configured for use in lwipopts.h */
@@ -643,16 +643,21 @@ lwip_close(int s)
 int
 lwip_connect(int s, const struct sockaddr *name, socklen_t namelen)
 {
+  _rtl_printf("[LWIP]sockets.c: lwip_connect starts ---\n\r");
   struct lwip_sock *sock;
   err_t err;
 
   sock = get_socket(s);
   if (!sock) {
+    _rtl_printf("[LWIP]sockets.c: 1- no socket ---\n\r");
     return -1;
   }
 
   if (!SOCK_ADDR_TYPE_MATCH_OR_UNSPEC(name, sock)) {
-    /* sockaddr does not match socket type (IPv4/IPv6) */
+    /* sockaddr does not match socket type (IPv4/IPv6) */    
+    _rtl_printf("[LWIP]sockets.c: 2- sockaddr does not match socket type (IPv4/IPv6) ---\n\r");
+    _rtl_printf("[LWIP]sockets.c: 2- ((name)->sa_family == AF_UNSPEC) is %x          ---\n\r",((name)->sa_family == AF_UNSPEC));   
+    _rtl_printf("[LWIP]sockets.c: 2-  SOCK_ADDR_TYPE_MATCH(name, sock) is %x         ---\n\r", SOCK_ADDR_TYPE_MATCH(name, sock));
     sock_set_errno(sock, err_to_errno(ERR_VAL));
     return -1;
   }
@@ -660,8 +665,11 @@ lwip_connect(int s, const struct sockaddr *name, socklen_t namelen)
   LWIP_UNUSED_ARG(namelen);
   if (name->sa_family == AF_UNSPEC) {
     LWIP_DEBUGF(SOCKETS_DEBUG, ("lwip_connect(%d, AF_UNSPEC)\n", s));
+    _rtl_printf("{LWIP]sockets.c: 3- name->sa_family == AF_UNSPEC ---\n\r");
     err = netconn_disconnect(sock->conn);
   } else {
+    _rtl_printf("{LWIP]sockets.c: 3- name->sa_family  AF_INET6   %x ---\n\r", (name->sa_family));
+
     ip_addr_t remote_addr;
     u16_t remote_port;
 
@@ -671,29 +679,51 @@ lwip_connect(int s, const struct sockaddr *name, socklen_t namelen)
                sock_set_errno(sock, err_to_errno(ERR_ARG)); return -1;);
 
     SOCKADDR_TO_IPADDR_PORT(name, &remote_addr, remote_port);
+    _rtl_printf("{LWIP]sockets.c: 3- lwip_connect(%x, addr=%x  ---\n\r", s,remote_addr);    
     LWIP_DEBUGF(SOCKETS_DEBUG, ("lwip_connect(%d, addr=", s));
     ip_addr_debug_print_val(SOCKETS_DEBUG, remote_addr);
     LWIP_DEBUGF(SOCKETS_DEBUG, (" port=%"U16_F")\n", remote_port));
-
+    // print address 1
+    for (int i = 0; i < 4; i++) {                         // IPv6 address
+      _rtl_printf("[LWIP]sockets.c: remote_add[%x] = %x \n\r",i, remote_addr.u_addr.ip6.addr[i]);
+   }
+    
 #if LWIP_IPV4 && LWIP_IPV6
     /* Dual-stack: Unmap IPv4 mapped IPv6 addresses */
+
+    _rtl_printf(" zzw      #if LWIP_IPV4 && LWIP_IPV6 \r\n");
+    _rtl_printf(" zzw      #if LWIP_IPV4 && LWIP_IPV6   %x  \r\n", IP_IS_V6_VAL(remote_addr));
+    _rtl_printf(" zzw      #if LWIP_IPV4 && LWIP_IPV6  %x   \r\n", ip6_addr_isipv4mappedipv6(ip_2_ip6(&remote_addr)));
+
+
+
     if (IP_IS_V6_VAL(remote_addr) && ip6_addr_isipv4mappedipv6(ip_2_ip6(&remote_addr))) {
+      _rtl_printf("{LWIP]sockets.c: 4- lwip_connect Dual-stack  ---\n\r");
       unmap_ipv4_mapped_ipv6(ip_2_ip4(&remote_addr), ip_2_ip6(&remote_addr));
       IP_SET_TYPE_VAL(remote_addr, IPADDR_TYPE_V4);
     }
 #endif /* LWIP_IPV4 && LWIP_IPV6 */
 
+     for (int i = 0; i < 4; i++) {                         // IPv6 address
+       _rtl_printf("zzzz brfor err [LWIP]sockets.c: remote_add[%x] = %x \n\r",i, remote_addr.u_addr.ip6.addr[i]);
+    }
+
+
     err = netconn_connect(sock->conn, &remote_addr, remote_port);
   }
-
+  
+   
+  
   if (err != ERR_OK) {
+    _rtl_printf("{LWIP]sockets.c: 5- lwip_connect(%x) failed, err=%d  ---\n\r", s, err);
     LWIP_DEBUGF(SOCKETS_DEBUG, ("lwip_connect(%d) failed, err=%d\n", s, err));
     sock_set_errno(sock, err_to_errno(err));
     return -1;
   }
-
+  
   LWIP_DEBUGF(SOCKETS_DEBUG, ("lwip_connect(%d) succeeded\n", s));
   sock_set_errno(sock, 0);
+  _rtl_printf("{LWIP]sockets.c: 6- lwip_connect end  ---\n\r", s, err);
   return 0;
 }
 
@@ -1962,7 +1992,6 @@ lwip_getsockopt_impl(int s, int level, int optname, void *optval, socklen_t *opt
         sock_set_errno(sock, err_to_errno(sock->conn->last_err));
       }
 /* Added by Realtek start */	  
-// zzw arduino
 #ifndef ARDUINO_SDK
       //SO_ERROR returns only "pending errors", and EWOULDBLOCK is not one of them
       //Check https://savannah.nongnu.org/bugs/?func=detailitem&item_id=49848#options

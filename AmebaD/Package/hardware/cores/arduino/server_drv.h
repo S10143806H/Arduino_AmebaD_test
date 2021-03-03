@@ -30,6 +30,8 @@ class ServerDrv
         int startServer(uint16_t port, uint8_t protMode = TCP_MODE);
         int getAvailable(int sock);
         int startClient(uint32_t ipAddress, uint16_t port, uint8_t protMode = TCP_MODE);
+        int startClientv6(uint32_t *ipv6Address, uint16_t port, uint8_t protMode = TCP_MODE);
+        
         int getLastErrno(int sock);
         void stopClient(int sock);
         bool getData(int sock, uint8_t *data, uint8_t peek = 0);
@@ -45,6 +47,14 @@ class ServerDrv
         void getRemoteData(int sock, uint32_t *ip, uint16_t *port);
         int setSockRecvTimeout(int sock, int timeout);
 
+        void setIPv6TCPClient(void);
+
+        void setIPv6TCPServer(void);
+
+        void setIPv6UDPClient(void);
+
+        void setIPv6UDPServer(void);
+        
     private:
         bool _available;
         uint32_t _peer_addr;

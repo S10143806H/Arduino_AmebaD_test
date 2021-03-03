@@ -58,7 +58,6 @@
 
 #include "lwip/ethip6.h" //Add for ipv6
 
-#include "wifi_conf.h"
 #include <platform/platform_stdlib.h>
 #include "platform_opts.h"
 
@@ -68,10 +67,6 @@
 
 #if defined(CONFIG_INIC_HOST) && CONFIG_INIC_HOST
 #include "freertos/inic_intf.h"
-#endif
-
-#if defined(CONFIG_INIC_IPC) && CONFIG_INIC_IPC
-#include "inic_ipc_host_trx.h"
 #endif
 
 #define netifMTU                                (1500)
@@ -146,10 +141,8 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
 	int sg_len = 0;
 	struct pbuf *q;
 #if CONFIG_WLAN
-#ifndef CONFIG_INIC_IPC
-	if(!wifi_is_running(netif_get_idx(netif)))
+	if(!rltk_wlan_running(netif_get_idx(netif)))
 		return ERR_IF;
-#endif
 #endif
 	for (q = p; q != NULL && sg_len < MAX_ETH_DRV_SG; q = q->next) {
 		sg_list[sg_len].buf = (unsigned int) q->payload;
@@ -158,11 +151,7 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
 
 	if (sg_len) {
 #if CONFIG_WLAN
-#if defined(CONFIG_INIC_IPC) && CONFIG_INIC_IPC
-	if (inic_ipc_host_send(netif_get_idx(netif), sg_list, sg_len, p->tot_len) == 0)
-#else
 		if (rltk_wlan_send(netif_get_idx(netif), sg_list, sg_len, p->tot_len) == 0)
-#endif
 #elif CONFIG_INIC_HOST
 		if(rltk_inic_send( sg_list, sg_len, p->tot_len) == 0)
 #else
@@ -185,7 +174,7 @@ static err_t low_level_output_mii(struct netif *netif, struct pbuf *p)
 		sg_list[sg_len].buf = (unsigned int) q->payload;
 		sg_list[sg_len++].len = q->len;
 	}
-#if !defined(CONFIG_PLATFORM_8721D) && !defined(CONFIG_PLATFORM_AMEBAD2)
+#if !defined(CONFIG_PLATFORM_8721D)
 	if (sg_len) {
 		 if(rltk_mii_send(sg_list, sg_len, p->tot_len) == 0)
 			return ERR_OK;
@@ -227,10 +216,8 @@ void ethernetif_recv(struct netif *netif, int total_len)
 	struct pbuf *p, *q;
 	int sg_len = 0;
 #if CONFIG_WLAN
-#ifndef CONFIG_INIC_IPC
-	if(!wifi_is_running(netif_get_idx(netif)))
+	if(!rltk_wlan_running(netif_get_idx(netif)))
 		return;
-#endif
 #endif
 	if ((total_len > MAX_ETH_MSG) || (total_len < 0))
 		total_len = MAX_ETH_MSG;
@@ -251,9 +238,7 @@ void ethernetif_recv(struct netif *netif, int total_len)
 	// Copy received packet to scatter list from wrapper rx skb
   	//printf("\n\rwlan:%c: Recv sg_len: %d, tot_len:%d", netif->name[1],sg_len, total_len);
 #if CONFIG_WLAN
-#ifndef CONFIG_INIC_IPC
 	rltk_wlan_recv(netif_get_idx(netif), sg_list, sg_len);
-#endif
 #elif CONFIG_INIC_HOST
 	rltk_inic_recv(sg_list, sg_len);
 #endif
@@ -284,7 +269,7 @@ void ethernetif_mii_recv(struct netif *netif, int total_len)
    		sg_list[sg_len].buf = (unsigned int) q->payload;
 		sg_list[sg_len++].len = q->len;
 	}
-#if !defined(CONFIG_PLATFORM_8721D) && !defined(CONFIG_PLATFORM_AMEBAD2)
+#if !defined(CONFIG_PLATFORM_8721D)
 	rltk_mii_recv(sg_list, sg_len);
 #endif
 	// Pass received packet to the interface

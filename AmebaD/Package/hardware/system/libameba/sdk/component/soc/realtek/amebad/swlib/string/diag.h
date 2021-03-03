@@ -19,9 +19,7 @@ u32 DiagPrintfD(const char *fmt, ...);
 int DiagVSprintf(char *buf, const char *fmt, const int *dp);
 
 //zzw arduino
-#if defined(ARDUINO_SDK)
 #define _DbgDump  DiagPrintf
-#endif
 
 /** @addtogroup Ameba_Platform
   * @{

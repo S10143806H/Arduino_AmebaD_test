@@ -30,11 +30,7 @@ PSRAMCFG_TypeDef psram_dev_config = {
 SDIOHCFG_TypeDef sdioh_config = {
 	.sdioh_bus_speed = SD_SPEED_HS,				//SD_SPEED_DS or SD_SPEED_HS
 	.sdioh_bus_width = SDIOH_BUS_WIDTH_4BIT, 	//SDIOH_BUS_WIDTH_1BIT or SDIOH_BUS_WIDTH_4BIT
-#if defined(ARDUINO_SDK)
-	.sdioh_cd_pin = _PA_6,						//_PB_25/_PA_6/_PNC
-#else
 	.sdioh_cd_pin = _PB_25,						//_PB_25/_PA_6/_PNC
-#endif
 	.sdioh_wp_pin = _PNC,						//_PB_24/_PA_5/_PNC
 };
 

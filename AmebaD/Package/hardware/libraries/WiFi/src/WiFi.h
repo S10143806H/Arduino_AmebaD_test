@@ -29,6 +29,7 @@ extern "C" {
 }
 
 #include "IPAddress.h"
+#include "IPv6Address.h"
 #include "WiFiClient.h"
 #include "WiFiServer.h"
 #include "WiFiSSLClient.h"
@@ -136,6 +137,11 @@ class WiFiClass
          */
         IPAddress localIP();
 
+
+        IPv6Address localIPv6();
+
+
+        
         /*
          * Get the interface subnet mask address.
          *
@@ -239,11 +245,15 @@ class WiFiClass
          */
         int hostByName(const char* aHostname, IPAddress& aResult);
 
+        int hostByNamev6(const char* aHostname, IPv6Address& aResult);
+
         int apbegin(char* ssid, char* channel, uint8_t hidden_ssid = 0);
 
         int apbegin(char* ssid, char* password, char* channel, uint8_t hidden_ssid = 0);
 
         int disablePowerSave();
+
+        void enableIPv6();
 
         friend class WiFiClient;
         friend class WiFiServer;

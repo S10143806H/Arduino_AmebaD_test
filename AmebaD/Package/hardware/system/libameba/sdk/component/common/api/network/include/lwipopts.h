@@ -56,8 +56,6 @@ a lot of data that needs to be copied, this should be set high. */
     #define MEM_SIZE                (23*1024)
 #elif defined(CONFIG_PLATFORM_8721D)
     #define MEM_SIZE                (7*1024)
-#elif defined(CONFIG_PLATFORM_AMEBAD2)
-    #define MEM_SIZE                (7*1024)
 #elif defined(ENABLE_AMAZON_COMMON)
     #define MEM_SIZE                (10*1024)
 #else
@@ -146,8 +144,6 @@ a lot of data that needs to be copied, this should be set high. */
 #ifdef CONFIG_HIGH_TP_TEST
     #define TCP_WND                 (8*TCP_MSS)
 #elif defined(CONFIG_PLATFORM_8721D)
-    #define TCP_WND                 (5*TCP_MSS)
-#elif defined(CONFIG_PLATFORM_AMEBAD2)
     #define TCP_WND                 (5*TCP_MSS)
 #elif defined(ENABLE_AMAZON_COMMON)
     #define TCP_WND                 (4*TCP_MSS)
@@ -367,7 +363,7 @@ Certain platform allows computing and verifying the IP, UDP, TCP and ICMP checks
    -----------------------------------
 */
 
-#define LWIP_DEBUG                      0
+#define LWIP_DEBUG                      1
 
 
 /*
@@ -400,12 +396,12 @@ Certain platform allows computing and verifying the IP, UDP, TCP and ICMP checks
 #define LWIP_TCPIP_TIMEOUT              1
 #define LWIP_SO_RCVTIMEO                1
 #define LWIP_SOCKET_SET_ERRNO           0
-#undef LWIP_DEBUG
+//#undef LWIP_DEBUG
 #define LWIP_RAW                        1
 #define LWIP_AUTOIP                     1
 #define TCPIP_THREAD_NAME              "TCP_IP" 
 
-#define LWIP_IPV6                       0
+#define LWIP_IPV6                       1
 #if LWIP_IPV6
 #undef  MEMP_NUM_SYS_TIMEOUT
 #define MEMP_NUM_SYS_TIMEOUT            13

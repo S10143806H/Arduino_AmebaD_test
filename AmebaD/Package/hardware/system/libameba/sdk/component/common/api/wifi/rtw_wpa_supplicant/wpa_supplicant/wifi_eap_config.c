@@ -78,7 +78,7 @@ void judge_station_disconnect(void)
 	int mode = 0;
 	unsigned char ssid[33];
 
-	wifi_get_mode(WLAN0_NAME, &mode);
+	wext_get_mode(WLAN0_NAME, &mode);
 
 	switch(mode) {
 	case IW_MODE_MASTER:	//In AP mode
@@ -87,7 +87,7 @@ void judge_station_disconnect(void)
 		wifi_on(RTW_MODE_STA);
 		break;
 	case IW_MODE_INFRA:		//In STA mode
-		if(wifi_get_ssid(WLAN0_NAME, ssid) > 0)
+		if(wext_get_ssid(WLAN0_NAME, ssid) > 0)
 			wifi_disconnect();
 	}	
 }
@@ -197,7 +197,7 @@ int eap_start(char *method)
 		vTaskDelay(1000 / portTICK_RATE_MS);
 	}
 	
-	if(wifi_is_running(WLAN1_IDX)){
+	if(rltk_wlan_running(WLAN1_IDX)){
 		printf("\n\rNot support con-current mode!\n\r");
 		return -1;
 	}

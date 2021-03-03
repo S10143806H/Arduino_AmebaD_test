@@ -177,14 +177,10 @@ static void _freertos_mutex_free(_mutex *pmutex)
 
 static int __in_interrupt(void)
 {
-#ifdef ARM_CORE_CA7
-	return __get_mode()!=CPSR_M_USR;
-#else
 #if defined(__ICCARM__)
 	return (__get_PSR()&0x1FF)!=0;
 #elif defined(__GNUC__)
 	return (__get_xPSR()&0x1FF)!=0;
-#endif
 #endif
 }
 
@@ -507,7 +503,7 @@ static u32 _freertos_sec_to_systime(u32 sec)
 
 static void _freertos_msleep_os(int ms)
 {
-#if defined(CONFIG_PLATFORM_8195A) || defined(CONFIG_PLATFORM_8195BHP) || defined(CONFIG_PLATFORM_8735B)
+#if defined(CONFIG_PLATFORM_8195A) || defined(CONFIG_PLATFORM_8195BHP)
 	vTaskDelay(ms / portTICK_RATE_MS);
 #elif defined(CONFIG_PLATFORM_8711B) || defined(CONFIG_PLATFORM_8721D) || (defined CONFIG_PLATFORM_AMEBAD2)
 	if (pmu_yield_os_check()) {
@@ -533,7 +529,7 @@ static void _freertos_usleep_os(int us)
 	WLAN_BSP_UsLoop(us);
 #elif defined(CONFIG_PLATFORM_8195A)
 	HalDelayUs(us);
-#elif defined(CONFIG_PLATFORM_8195BHP) || defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8735B)
+#elif defined(CONFIG_PLATFORM_8195BHP) || defined(CONFIG_PLATFORM_8710C)
 	hal_delay_us(us);
 #elif defined(CONFIG_PLATFORM_8711B) || defined(CONFIG_PLATFORM_8721D) || (defined CONFIG_PLATFORM_AMEBAD2)
 	DelayUs(us);
@@ -570,7 +566,7 @@ static void _freertos_udelay_os(int us)
 	WLAN_BSP_UsLoop(us);
 #elif defined(CONFIG_PLATFORM_8195A)
 	HalDelayUs(us);
-#elif defined(CONFIG_PLATFORM_8195BHP) || defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8735B)
+#elif defined(CONFIG_PLATFORM_8195BHP) || defined(CONFIG_PLATFORM_8710C)
 	hal_delay_us(us);
 #elif defined(CONFIG_PLATFORM_8711B) || defined(CONFIG_PLATFORM_8721D)|| (defined CONFIG_PLATFORM_AMEBAD2)
 	DelayUs(us);
@@ -581,7 +577,7 @@ static void _freertos_udelay_os(int us)
 
 static void _freertos_yield_os(void)
 {
-#if defined(CONFIG_PLATFORM_8195A) || defined(CONFIG_PLATFORM_8195BHP) || defined(CONFIG_PLATFORM_8735B)
+#if defined(CONFIG_PLATFORM_8195A) || defined(CONFIG_PLATFORM_8195BHP)
 	taskYIELD();
 #elif defined(CONFIG_PLATFORM_8711B) || defined(CONFIG_PLATFORM_8721D)|| (defined CONFIG_PLATFORM_AMEBAD2)
 	if (pmu_yield_os_check()) {
@@ -602,42 +598,26 @@ static void _freertos_yield_os(void)
 
 static void _freertos_ATOMIC_SET(ATOMIC_T *v, int i)
 {
-#if defined(STDATOMIC)	
-	atomic_store(v, i);
-#else
 	atomic_set(v,i);
-#endif
 }
 
 static int _freertos_ATOMIC_READ(ATOMIC_T *v)
 {
-#if defined(STDATOMIC)	
-	return atomic_load(v);
-#else	
 	return atomic_read(v);
-#endif
 }
 
 static void _freertos_ATOMIC_ADD(ATOMIC_T *v, int i)
 {
-#if defined(STDATOMIC)	
-	atomic_fetch_add(v, i);
-#else
 	save_and_cli();
 	v->counter += i;
 	restore_flags();
-#endif
 }
 
 static void _freertos_ATOMIC_SUB(ATOMIC_T *v, int i)
 {
-#if defined(STDATOMIC)	
-	atomic_fetch_sub(v, i);
-#else	
 	save_and_cli();
 	v->counter -= i;
 	restore_flags();
-#endif
 }
 
 static void _freertos_ATOMIC_INC(ATOMIC_T *v)
@@ -652,10 +632,6 @@ static void _freertos_ATOMIC_DEC(ATOMIC_T *v)
 
 static int _freertos_ATOMIC_ADD_RETURN(ATOMIC_T *v, int i)
 {
-#if defined(STDATOMIC)	
-	atomic_fetch_add(v, i);
-	return atomic_load(v);
-#else	
 	int temp;
 
 	save_and_cli();
@@ -665,15 +641,10 @@ static int _freertos_ATOMIC_ADD_RETURN(ATOMIC_T *v, int i)
 	restore_flags();
 
 	return temp;
-#endif
 }
 
 static int _freertos_ATOMIC_SUB_RETURN(ATOMIC_T *v, int i)
 {
-#if defined(STDATOMIC)	
-	atomic_fetch_sub(v, i);
-	return atomic_load(v);
-#else	
 	int temp;
 
 	save_and_cli();
@@ -683,7 +654,6 @@ static int _freertos_ATOMIC_SUB_RETURN(ATOMIC_T *v, int i)
 	restore_flags();
 
 	return temp;
-#endif
 }
 
 static int _freertos_ATOMIC_INC_RETURN(ATOMIC_T *v)
@@ -716,7 +686,7 @@ static int _freertos_arc4random(void)
 {
 #if defined(CONFIG_PLATFORM_8721D)|| (defined CONFIG_PLATFORM_AMEBAD2)
 
-#if defined(CONFIG_PLATFORM_AMEBAD2)
+#if defined(CONFIG_PLATFORM_AMEBAD2)//Temporary modification. need to modify when remove 'CONFIG_PLATFORM_8721D'
 	int value = (int)rand();
 #else
 	int value = (int)Rand();

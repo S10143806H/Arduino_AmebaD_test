@@ -24,7 +24,6 @@ extern "C" {
 		defined(CONFIG_PLATFORM_8711B)+\
 		defined(CONFIG_PLATFORM_8721D)+\
 		defined(CONFIG_PLATFORM_8195BHP)+\
-		defined(CONFIG_PLATFORM_8735B)+\
 		defined(USE_STM322xG_EVAL)+\
 		defined(USE_STM324xG_EVAL)+\
 		defined(CONFIG_PLATFOMR_CUSTOMER_RTOS)+\
@@ -42,8 +41,6 @@ extern "C" {
 	#include "platform_stdlib_amebad2.h"
 #elif defined(CONFIG_PLATFORM_8195BHP)
 	#include "platform_stdlib_rtl8195bhp.h"	
-#elif defined(CONFIG_PLATFORM_8735B)
-	#include "platform_stdlib_rtl8735b.h"	
 #elif defined(USE_STM322xG_EVAL) || defined(USE_STM324xG_EVAL)  || defined(STM32F10X_XL) 
 	#include "platform_stdlib_stm32.h"
 #elif defined(CONFIG_PLATFOMR_CUSTOMER_RTOS)
@@ -55,7 +52,7 @@ extern "C" {
 #endif
 
 
-#if defined(CONFIG_PLATFORM_AMEBA_X) && (CONFIG_PLATFORM_AMEBA_X == 0)
+#if (CONFIG_PLATFORM_AMEBA_X == 0)
 #ifndef CONFIG_PLATFOMR_CUSTOMER_RTOS
 #include "basic_types.h"
 #endif

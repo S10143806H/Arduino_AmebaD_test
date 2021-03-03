@@ -3,7 +3,7 @@
   * This module is a confidential and proprietary property of RealTek and
   * possession or use of this module requires written permission of RealTek.
   *
-  * Copyright(c) 2016, Realtek Semiconductor Corporation. All rights reserved.
+  * Copyright(c) 2016, Realtek Semiconductor Corporation. All rights reserved. 
   *
 ******************************************************************************/
 
@@ -21,24 +21,20 @@
 #ifdef WIFI_PERFORMANCE_MONITOR
 #include <wifi_performance_monitor.h>
 #else
-#define WIFI_MONITOR_TIMER_START(x)
-#define WIFI_MONITOR_TIMER_END(x, len)
-#endif
-
-#if defined(CONFIG_INIC_IPC) && CONFIG_INIC_IPC
-#include "inic_ipc_dev_trx.h"
+#define WIFI_MONITOR_TIMER_START(x) 
+#define WIFI_MONITOR_TIMER_END(x, len) 
 #endif
 
 /**
  *      rltk_wlan_set_netif_info - set netif hw address and register dev pointer to netif device
  *      @idx_wlan: netif index
- *			    0 for STA only or SoftAP only or STA in STA+SoftAP concurrent mode,
+ *			    0 for STA only or SoftAP only or STA in STA+SoftAP concurrent mode, 
  *			    1 for SoftAP in STA+SoftAP concurrent mode
  *      @dev: register netdev pointer to LWIP. Reserved.
  *      @dev_addr: set netif hw address
  *
  *      Return Value: None
- */
+ */     
 void rltk_wlan_set_netif_info(int idx_wlan, void * dev, unsigned char * dev_addr)
 {
 #if (CONFIG_LWIP_LAYER == 1)
@@ -46,14 +42,7 @@ void rltk_wlan_set_netif_info(int idx_wlan, void * dev, unsigned char * dev_addr
 	//rtw_memcpy(xnetif[idx_wlan]->hwaddr, dev_addr, 6);
 	//set netif hwaddr later
 #else
-#if defined(CONFIG_INIC_IPC) && CONFIG_INIC_IPC
-	rtw_mdelay_os(100);
-#endif
 	LwIP_wlan_set_netif_info(idx_wlan, dev, dev_addr);
-#endif
-#else
-#if defined(CONFIG_INIC_IPC) && CONFIG_INIC_IPC
-	inic_ipc_dev_set_netif_info(idx_wlan, dev, dev_addr);
 #endif
 #endif
 }
@@ -66,14 +55,14 @@ void rltk_wlan_set_netif_info(int idx_wlan, void * dev, unsigned char * dev_addr
  *      @total_len: total data len
  *
  *      Return Value: None
- */
+ */     
 int rltk_wlan_send(int idx, struct eth_drv_sg *sg_list, int sg_len, int total_len)
 {
 #if (CONFIG_LWIP_LAYER == 1)
 	struct eth_drv_sg *last_sg;
 	struct sk_buff *skb = NULL;
 	int ret = 0;
-
+	
 	WIFI_MONITOR_TIMER_START(wifi_time_test.wlan_send_time);
 	if(idx == -1){
 		DBG_ERR("netif is DOWN");
@@ -90,7 +79,7 @@ int rltk_wlan_send(int idx, struct eth_drv_sg *sg_list, int sg_len, int total_le
 		return -1;
 	}
 	restore_flags();
-
+	
 	WIFI_MONITOR_TIMER_START(wifi_time_test.wlan_send_time1);
 	skb = rltk_wlan_alloc_skb(total_len);
 	WIFI_MONITOR_TIMER_END(wifi_time_test.wlan_send_time1, total_len);
@@ -126,13 +115,13 @@ exit:
  *      @sg_len: size of each data buffer
  *
  *      Return Value: None
- */
+ */     
 void rltk_wlan_recv(int idx, struct eth_drv_sg *sg_list, int sg_len)
 {
 #if (CONFIG_LWIP_LAYER == 1)
 	struct eth_drv_sg *last_sg;
 	struct sk_buff *skb;
-
+	
 	DBG_TRACE("%s is called", __FUNCTION__);
 	if(idx == -1){
 		DBG_ERR("skb is NULL");
@@ -155,9 +144,7 @@ int netif_is_valid_IP(int idx, unsigned char *ip_dest)
 #if defined(CONFIG_MBED_ENABLED)
 	return 1;
 #else
-#if (CONFIG_LWIP_LAYER == 1)
 	return LwIP_netif_is_valid_IP(idx, ip_dest);
-#endif
 #endif
 }
 
@@ -192,13 +179,8 @@ void netif_rx(int idx, unsigned int len)
 	LwIP_ethernetif_recv(idx, len);
 #endif
 #endif
-
 #if (CONFIG_INIC_EN == 1)
-#if (CONFIG_INIC_IPC)
-	inic_ipc_dev_recv(idx, len);
-#else
-	inic_netif_rx(idx, len);
-#endif
+        inic_netif_rx(idx, len);
 #endif
 	WIFI_MONITOR_TIMER_END(wifi_time_test.netif_rx_time, len);
 }

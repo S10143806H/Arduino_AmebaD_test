@@ -1623,7 +1623,7 @@ static int SimpleConfig_softAP_start(const char* ap_name, const char *ap_passwor
 
 	while(1) {
 		char essid[33];
-		if(wifi_get_ssid(WLAN0_NAME, (unsigned char *) essid) > 0) {
+		if(wext_get_ssid(WLAN0_NAME, (unsigned char *) essid) > 0) {
 			if(strcmp((const char *) essid, (const char *)ap_name) == 0) {
 				//printf("%s started\n", ap_name);
 				ret = 0;
@@ -1838,7 +1838,7 @@ static void simple_config_channel_control(void *para)
 #if SC_SOFTAP_EN
 #if defined(CONFIG_BT_CONFIG) && CONFIG_BT_CONFIG
 	int mode;
-	wifi_get_mode(WLAN0_NAME, &mode); // mode is equal to IW_MODE_INFRA if breaked by BT Config  
+	wext_get_mode(WLAN0_NAME, &mode); // mode is equal to IW_MODE_INFRA if breaked by BT Config  
 	if(mode != IW_MODE_INFRA)
     	simple_config_kick_STA();
 #else
