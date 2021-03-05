@@ -1,10 +1,10 @@
 #include <WiFi.h>
 
-char ssid[] = "IPv6";    // your network SSID (name)
-char pass[] = "123456789";       // your network passwordint keyIndex = 0;            // your network key Index number (needed only for WEP)
+//char ssid[] = "IPv6";    // your network SSID (name)
+//char pass[] = "123456789";       // your network passwordint keyIndex = 0;            // your network key Index number (needed only for WEP)
 
-//char ssid[] = "xiaomi_test";    // your network SSID (name)
-//char pass[] = "1234567890";       // your network passwordint keyIndex = 0;            // your network key Index number (needed only for WEP)
+char ssid[] = "xiaomi_test";    // your network SSID (name)
+char pass[] = "1234567890";       // your network passwordint keyIndex = 0;            // your network key Index number (needed only for WEP)
 
 // char ssid[] = "SINGTEL-D45F";    // your network SSID (name)
 // char pass[] = "mooxuteeth";       // your network passwordint keyIndex = 0;            // your network key Index number (needed only for WEP)

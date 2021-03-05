@@ -12,8 +12,6 @@ extern "C" {
 #include "WiFiServer.h"
 #include "server_drv.h"
 
-#define EXAMPLE_IPV6
-
 WiFiClient::WiFiClient() : _sock(MAX_SOCK_NUM) {
     _is_connected = false;
     recvTimeout = 3000;
@@ -144,16 +142,18 @@ WiFiClient::operator bool() {
 int WiFiClient::connect(const char* host, uint16_t port) {
     IPAddress remote_addr;
     IPv6Address remote_addr_v6;
-    printf("[INFO]WiFiClient.cpp: connect0() host address  :     %s \n\r", host);
+    printf("[INFO]WiFiClient.cpp: connect() host address  :     %s \n\r", host);
     /*if (WiFi.hostByName(host, remote_addr)) {
         printf("[INFO]WiFiClient.cpp: connect0() remote_addr  :     %x\n\r",remote_addr);
         return connect(remote_addr, port);
     }*/
     #ifndef EXAMPLE_IPV6
+    printf("[INFO]WiFiClient.cpp: enter hostByNameV4 \n\r");
     if(WiFi.hostByName(host, remote_addr)){
         return connect(remote_addr, port);
     }
     #else
+    printf("[INFO]WiFiClient.cpp: enter hostByNameV6 \n\r");
     if(WiFi.hostByNamev6(host, remote_addr_v6)){
         return connectv6(remote_addr_v6, port);
     }
@@ -162,7 +162,7 @@ int WiFiClient::connect(const char* host, uint16_t port) {
 }
 
 int WiFiClient::connect(IPAddress ip, uint16_t port) {
-    printf("[INFO]WiFiClient.cpp: connect1 \n\r");
+    printf("[INFO]WiFiClient.cpp: enter connectV4 \n\r");
     _is_connected = false;
     _sock = clientdrv.startClient(ip, port);
 
@@ -177,22 +177,21 @@ int WiFiClient::connect(IPAddress ip, uint16_t port) {
 }
 
 int WiFiClient::connectv6(IPv6Address ipv6, uint16_t port) {
-    printf("[INFO]wifiClient.cpp: connect2 \n\r");
+    printf("[INFO]wifiClient.cpp: enter connectV6 \n\r");
     _is_connected = false;
     _sock = clientdrv.startClientv6(ipv6, port);
-    printf("[INFO]wifiClient.cpp:  sock value: %x\n\r",_sock);
+    printf("[INFO]wifiClient.cpp: connectv6 sock value: %x\n\r",_sock);
      if (_sock < 0) {
         _is_connected = false;
-        printf("[INFO]wifiClient.cpp:  connect false\n\r");
+        printf("[INFO]wifiClient.cpp: connectv6 not connected\n\r");
         return 0;
     } else {
         _is_connected = true;
-        printf("[INFO]wifiClient.cpp:  connect true\n\r");
+        printf("[INFO]wifiClient.cpp: connectv6 connected\n\r");
         clientdrv.setSockRecvTimeout(_sock, recvTimeout);
     }
     return 1;
 }
-
 
 int WiFiClient::peek() {
     uint8_t b;

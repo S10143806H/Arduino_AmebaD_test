@@ -1,8 +1,5 @@
 #include "wifi_drv.h"
 
-//#define EXAMPLE_IPV6
-
-
 // arduino includes
 #include "wl_definitions.h"
 #include "wl_types.h"
@@ -614,49 +611,49 @@ int WiFiDrv::getHostByName(const char* aHostname, IPAddress& aResult)
     }
 }
 
-int WiFiDrv::getHostByNamev6(const char* aHostname, IPv6Address& aResult)
-{
-    ip_addr_t ip_addr;  
+int WiFiDrv::getHostByNamev6(const char* aHostname, IPv6Address& aResult) {
+
+    printf("[INFO]wifi_drv.cpp: getHostByNamev6()");
+    ip_addr_t ip_addr;
     err_t err;
-    printf("[INFO]wifi_drv.cpp: getHostByName2() IPv6Address  :     %x   \n\r", aResult);
-    err = netconn_gethostbyname_addrtype(aHostname, &ip_addr, NETCONN_DNS_IPV6 );
+    err = netconn_gethostbyname_addrtype(aHostname, &ip_addr, NETCONN_DNS_IPV6);
+#if 1
+    printf("[INFO]wifi_drv.cpp:  0    %x   \n\r", ip_addr.u_addr.ip6.addr[0]);
+    printf("[INFO]wifi_drv.cpp:   1   %x   \n\r", ip_addr.u_addr.ip6.addr[1]);
+    printf("[INFO]wifi_drv.cpp:    2  %x   \n\r", ip_addr.u_addr.ip6.addr[2]);
+    printf("[INFO]wifi_drv.cpp:     3 %x   \n\r", ip_addr.u_addr.ip6.addr[3]);
+#endif
 
-     //printf("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz 0    %x   \n\r", ip_addr.u_addr.ip6.addr[0]);
-     //printf("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz  1   %x   \n\r", ip_addr.u_addr.ip6.addr[1]);
-    // printf("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz   2  %x   \n\r", ip_addr.u_addr.ip6.addr[2]);
-    // printf("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz    3 %x   \n\r", ip_addr.u_addr.ip6.addr[3]);
-
-     
-     if (err != ERR_OK) {
+    if (err != ERR_OK) {
         printf("[INFO]wifi_drv.cpp: netconn_gethostbyname not ok\n\r");
         return WL_FAILURE;
     } else {
         printf("[INFO]wifi_drv.cpp: netconn_gethostbyname done\n\r");
-
-  #ifdef EXAMPLE_IPV6
-for (int xx = 0; xx<4; xx++){
-        aResult._address.dword[xx] = ip_addr.u_addr.ip6.addr[xx];
-}
-        printf("[INFO]wifi_drv.cpp: ipv6 \r\n");
+        for (int xx = 0; xx < 4; xx++) {
+            aResult._address.dword[xx] = ip_addr.u_addr.ip6.addr[xx];
+        }
+#if 1
+        printf("[INFO]wifi_drv.cpp:  0 ip address: %x\n\r", aResult._address.dword[0]);
+        printf("[INFO]wifi_drv.cpp:  1 ip address: %x\n\r", aResult._address.dword[1]);
+        printf("[INFO]wifi_drv.cpp:  2 ip address: %x\n\r", aResult._address.dword[2]);
+        printf("[INFO]wifi_drv.cpp:  3 ip address: %x\n\r", aResult._address.dword[3]);
 #endif
-      //  printf("0 ip address: %x\n\r", aResult._address.dword[0]);
-      //  printf("1 ip address: %x\n\r", aResult._address.dword[1]);
-      //  printf("2 ip address: %x\n\r", aResult._address.dword[2]);
-      //  printf("3 ip address: %x\n\r", aResult._address.dword[3]);
         return WL_SUCCESS;
-    }     
+    }
 }
+
 
 int WiFiDrv::disablePowerSave()
 {
     return wifi_disable_powersave();
 }
-
+/*
 void WiFiDrv::enableIPv6()
 {
     #define EXAMPLE_IPV6	1
 }
 
+*/
 
 void WiFiDrv::config(uint8_t validParams, IPAddress local_ip, IPAddress gateway, IPAddress subnet) {
 

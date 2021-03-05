@@ -281,7 +281,7 @@ class WiFiDrv
 
         static int disablePowerSave();
 
-        static void enableIPv6();
+        //static void enableIPv6();
         
 };
 

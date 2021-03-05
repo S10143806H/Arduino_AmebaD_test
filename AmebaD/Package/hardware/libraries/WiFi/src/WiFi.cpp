@@ -101,6 +101,12 @@ IPAddress WiFiClass::localIP()
     return ret;
 }
 
+void WiFiClass::localIPv6()
+{
+    WiFiDrv::getIpv6Address();
+}
+
+
 IPAddress WiFiClass::subnetMask()
 {
     IPAddress ret;
@@ -181,13 +187,13 @@ uint8_t WiFiClass::status()
 
 int WiFiClass::hostByName(const char* aHostname, IPAddress& aResult)
 {
-    printf("[INFO]wifi.cpp: hostByName1\n\r");
+    printf("[INFO]wifi.cpp: hostByNameV4\n\r");
     return WiFiDrv::getHostByName(aHostname, aResult);
 }
 
 int WiFiClass::hostByNamev6(const char* aHostname, IPv6Address& aResult)
 {
-    printf("[INFO]wifi.cpp: hostByName2\n\r");
+    printf("[INFO]wifi.cpp: hostByNameV6\n\r");
     return WiFiDrv::getHostByNamev6(aHostname, aResult);
 }
 
@@ -236,11 +242,10 @@ int WiFiClass::disablePowerSave()
     return WiFiDrv::disablePowerSave();
 }
 
-void enableIPv6()
+void WiFiClass::enableIPv6()
 {
-    return WiFiDrv::enableIPv6();
+    #define EXAMPLE_IPV6 1
 }
-
 
 void WiFiClass::config(IPAddress local_ip) {
     WiFiDrv::config(1, local_ip, IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0));

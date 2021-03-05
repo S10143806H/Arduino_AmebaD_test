@@ -1,5 +1,4 @@
 #include <WiFi.h>
-#define EXAMPLE_IPV6
 
 //char ssid[] = "SINGTEL-D45F";    // your network SSID (name)
 //char pass[] = "mooxuteeth";       // your network passwordint keyIndex = 0;  
@@ -18,6 +17,8 @@ void setup() {
     while (!Serial) {
         ;
     }
+    // enable ipv6 macro
+    WiFi.enableIPv6();
     // check for the presence of the shield:
     if (WiFi.status() == WL_NO_SHIELD) {
         Serial.println("WiFi shield not present");

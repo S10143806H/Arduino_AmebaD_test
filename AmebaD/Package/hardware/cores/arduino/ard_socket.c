@@ -5,8 +5,6 @@
 #include <platform/platform_stdlib.h>
 #include <platform_opts.h>
 
-#define EXAMPLE_IPV6
-
 #define MAX_RECV_SIZE 1500
 #define MAX_SEND_SIZE 256
 #define UDP_SERVER_PORT 5002
@@ -260,12 +258,12 @@ int start_clientv6(uint32_t *ipv6Address, uint16_t port, uint8_t protMode) {
     int enable = 1;
     int timeout;
     int _sock;
-
+    
     if (protMode == 0) {  //tcp
-        printf("[INFO]ard_socket.c: TCP\n\r");
+        printf("[INFO]ard_socket.c  start_clientv6(): TCP\n\r");
         _sock = lwip_socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
     } else {
-        printf("[INFO]ard_socket.c: UDP\n\r");
+        printf("[INFO]ard_socket.c  start_clientv6(): UDP\n\r");
         _sock = lwip_socket(AF_INET6, SOCK_DGRAM, IPPROTO_UDP);
     }
 
@@ -273,18 +271,20 @@ int start_clientv6(uint32_t *ipv6Address, uint16_t port, uint8_t protMode) {
         printf("\r\nERROR opening socket\r\n");
         return -1;
     }
+    /*
 #ifndef EXAMPLE_IPV6  // LWIP_IPV4
     printf("\r\nOpening socket\r\n");
     struct sockaddr_in serv_addr;
     memset(&serv_addr, 0, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = ipv6Address;
+    serv_addr.sin_addr.s_addr = *ipv6Address; // (*ipv6Address) is uint32_t type
     serv_addr.sin_port = htons(port);
     printf("[INFO]ard_socket.c:  serv_addr.sin_family:     %d\n\r", serv_addr.sin_family);
     printf("[INFO]ard_socket.c:  serv_addr.sin_addr  :     %d\n\r", serv_addr.sin_addr.s_addr);
     printf("[INFO]ard_socket.c:  serv_addr.sin_port  :     %d\n\r", serv_addr.sin_port);
 
 #else  // LWIP_IPV6
+*/
     struct sockaddr_in6 serv_addr6;
     /* initialize ipv6 socket information */
     memset(&serv_addr6, 0, sizeof(serv_addr6));
@@ -301,7 +301,7 @@ int start_clientv6(uint32_t *ipv6Address, uint16_t port, uint8_t protMode) {
     printf("[INFO]v6ard_socket.c:  serv_addr6.sin6_family:     %x \n\r", serv_addr6.sin6_family);
     //printf("[INFO]v6ard_socket.c:  serv_addr6.sin6_addr  :     %x \n\r", &ipv6Address);
     printf("[INFO]v6ard_socket.c:  serv_addr6.sin6_port  :     %x \n\r", serv_addr6.sin6_port);
-#endif
+//#endif
 
     //printf("ipv6Address0     %x \n\r", ipv6Address[0]);
     //printf("ipv6Address 1    %x \n\r", ipv6Address[1]);
@@ -313,6 +313,7 @@ int start_clientv6(uint32_t *ipv6Address, uint16_t port, uint8_t protMode) {
     //printf("yyyyyyyyyyyyyyyyy   3  %x \n\r", serv_addr6.sin6_addr.un.u32_addr[3]);
 
 // LWIP_IPV4
+/*
 #ifndef EXAMPLE_IPV6  
 
     if (protMode == 0) {  //TCP MODE
@@ -335,7 +336,7 @@ int start_clientv6(uint32_t *ipv6Address, uint16_t port, uint8_t protMode) {
     }
 // LWIP_IPV6
 #else  
-
+*/
    printf("    zzw    LWIP_IPV6 connect starts      \n\r");
 
     /*
@@ -364,7 +365,7 @@ int start_clientv6(uint32_t *ipv6Address, uint16_t port, uint8_t protMode) {
        //printf("\r\nUdp client setup Server's information successful!\r\n");
     }
 
-#endif
+//#endif
 
     return _sock;
 }
@@ -373,11 +374,9 @@ void ipv6_tcp_client(void) {
 
     int client_fd;
     struct sockaddr_in6 ser_addr;
-    //int addrlen = sizeof(struct sockaddr_in6);
     char recv_data[MAX_RECV_SIZE];
     char send_data[MAX_SEND_SIZE] = "Hi Server!!";
    
-
     //create socket
     if ((client_fd = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP)) == -1) {
         printf("\n\r[ERROR] Create socket failed\n");
@@ -421,9 +420,10 @@ void ipv6_tcp_client(void) {
 }
 
 void ipv6_tcp_server(void) {
-/*    int server_fd, client_fd;
+    int server_fd, client_fd;
     struct sockaddr_in6 ser_addr, client_addr;
-    int addrlen = sizeof(struct sockaddr_in6);
+    //int addrlen = sizeof(struct sockaddr_in6);
+    socklen_t addrlen = sizeof(struct sockaddr_in6);
     char send_data[MAX_SEND_SIZE] = "Hi client!!";
     char recv_data[MAX_RECV_SIZE];
 
@@ -480,13 +480,13 @@ void ipv6_tcp_server(void) {
     closesocket(client_fd);
     closesocket(server_fd);
     return;
-*/}
+}
 
 void ipv6_udp_server(void) {
- /*   int server_fd;
+    int server_fd;
     struct sockaddr_in6 ser_addr, client_addr;
 
-    int addrlen = sizeof(struct sockaddr_in6);
+    socklen_t addrlen = sizeof(struct sockaddr_in6);
 
     char send_data[MAX_SEND_SIZE] = "Hi client!";
     char recv_data[MAX_RECV_SIZE];
@@ -526,13 +526,13 @@ void ipv6_udp_server(void) {
     }
     closesocket(server_fd);
     return;
-*/}
+}
 
 void ipv6_udp_client(void) {
- /*   int client_fd;
+    int client_fd;
     struct sockaddr_in6 ser_addr;
 
-    int addrlen = sizeof(struct sockaddr_in6);
+    socklen_t addrlen = sizeof(struct sockaddr_in6);
 
     char recv_data[MAX_RECV_SIZE];
     char send_data[MAX_SEND_SIZE] = "Hi Server!!";
@@ -569,6 +569,5 @@ void ipv6_udp_client(void) {
     }
 
     closesocket(client_fd);
-
-    return;*/
+    return;
 }

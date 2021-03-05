@@ -1,7 +1,7 @@
 #include <WiFi.h>
 
-char ssid[] = "SINGTEL-D45F";    // your network SSID (name)
-char pass[] = "mooxuteeth";       // your network passwordint keyIndex = 0;            // your network key Index number (needed only for WEP)
+char ssid[] = "xiaomi_test";    // your network SSID (name)
+char pass[] = "1234567890";       // your network passwordint keyIndex = 0;             // your network key Index number (needed only for WEP)
 
 int status = WL_IDLE_STATUS;
 //IPAddress server(64,233,189,94);  // numeric IP for Google (no DNS)
@@ -15,6 +15,8 @@ void setup() {
     while (!Serial) {
         ;
     }
+    // enable ipv6 macro
+    WiFi.enableIPv6();
     // check for the presence of the shield:
     if (WiFi.status() == WL_NO_SHIELD) {
         Serial.println("WiFi shield not present");

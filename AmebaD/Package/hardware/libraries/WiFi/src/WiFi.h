@@ -35,6 +35,8 @@ extern "C" {
 #include "WiFiSSLClient.h"
 #include "WiFiUdp.h"
 
+#define EXAMPLE_IPV6 0
+
 class WiFiClass
 {
     private:
@@ -138,7 +140,7 @@ class WiFiClass
         IPAddress localIP();
 
 
-        IPv6Address localIPv6();
+        void localIPv6();
 
 
         
