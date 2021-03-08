@@ -593,50 +593,42 @@ int WiFiDrv::getHostByName(const char* aHostname, IPAddress& aResult)
 {
     ip_addr_t ip_addr;  
     err_t err;
-    printf("[INFO]wifi_drv.cpp: getHostByName1() IPAddress  :     %x\n\r",aResult);
-    //err = netconn_gethostbyname(aHostname, &ip_addr);
+    printf("[INFO]wifi_drv.cpp: getHostByNameV4()  IPAddress: %x\n\r",aResult);
     err = netconn_gethostbyname_addrtype(aHostname, &ip_addr, NETCONN_DNS_IPV4);
     if (err != ERR_OK) {
-        printf("[INFO]wifi_drv.cpp: netconn_gethostbyname not ok\n\r");
         return WL_FAILURE;
     } else {
         printf("[INFO]wifi_drv.cpp: netconn_gethostbyname done\n\r");
-       
-        #ifndef EXAMPLE_IPV6
         aResult = ip_addr.u_addr.ip4.addr;
-        printf("[INFO]wifi_drv.cpp: ipv4 ");
-        #endif
-        printf(" ip address: %x\n\r",aResult);
+        printf("[INFO]wifi_drv.cpp: ipv4 IPAddress: %x\n\r",aResult);
         return WL_SUCCESS;    
     }
 }
 
 int WiFiDrv::getHostByNamev6(const char* aHostname, IPv6Address& aResult) {
 
-    printf("[INFO]wifi_drv.cpp: getHostByNamev6()");
+    printf("[INFO]wifi_drv.cpp: getHostByNamev6()\n\r");
     ip_addr_t ip_addr;
-    err_t err;
-    err = netconn_gethostbyname_addrtype(aHostname, &ip_addr, NETCONN_DNS_IPV6);
-#if 1
-    printf("[INFO]wifi_drv.cpp:  0    %x   \n\r", ip_addr.u_addr.ip6.addr[0]);
-    printf("[INFO]wifi_drv.cpp:   1   %x   \n\r", ip_addr.u_addr.ip6.addr[1]);
-    printf("[INFO]wifi_drv.cpp:    2  %x   \n\r", ip_addr.u_addr.ip6.addr[2]);
-    printf("[INFO]wifi_drv.cpp:     3 %x   \n\r", ip_addr.u_addr.ip6.addr[3]);
+    err_t err;   
+#if 0
+    printf("[INFO]wifi_drv.cpp:  0 ip address: %x\n\r", ip_addr.u_addr.ip6.addr[0]);
+    printf("[INFO]wifi_drv.cpp:  1 ip address: %x\n\r", ip_addr.u_addr.ip6.addr[1]);
+    printf("[INFO]wifi_drv.cpp:  2 ip address: %x\n\r", ip_addr.u_addr.ip6.addr[2]);
+    printf("[INFO]wifi_drv.cpp:  3 ip address: %x\n\r", ip_addr.u_addr.ip6.addr[3]);
 #endif
-
+    err = netconn_gethostbyname_addrtype(aHostname, &ip_addr, NETCONN_DNS_IPV6);
     if (err != ERR_OK) {
-        printf("[INFO]wifi_drv.cpp: netconn_gethostbyname not ok\n\r");
         return WL_FAILURE;
     } else {
         printf("[INFO]wifi_drv.cpp: netconn_gethostbyname done\n\r");
         for (int xx = 0; xx < 4; xx++) {
             aResult._address.dword[xx] = ip_addr.u_addr.ip6.addr[xx];
         }
-#if 1
-        printf("[INFO]wifi_drv.cpp:  0 ip address: %x\n\r", aResult._address.dword[0]);
-        printf("[INFO]wifi_drv.cpp:  1 ip address: %x\n\r", aResult._address.dword[1]);
-        printf("[INFO]wifi_drv.cpp:  2 ip address: %x\n\r", aResult._address.dword[2]);
-        printf("[INFO]wifi_drv.cpp:  3 ip address: %x\n\r", aResult._address.dword[3]);
+#if 0
+        printf("[INFO]wifi_drv.cpp:  0 dword: %x\n\r", aResult._address.dword[0]);
+        printf("[INFO]wifi_drv.cpp:  1 dword: %x\n\r", aResult._address.dword[1]);
+        printf("[INFO]wifi_drv.cpp:  2 dword: %x\n\r", aResult._address.dword[2]);
+        printf("[INFO]wifi_drv.cpp:  3 dword: %x\n\r", aResult._address.dword[3]);
 #endif
         return WL_SUCCESS;
     }
@@ -647,13 +639,6 @@ int WiFiDrv::disablePowerSave()
 {
     return wifi_disable_powersave();
 }
-/*
-void WiFiDrv::enableIPv6()
-{
-    #define EXAMPLE_IPV6	1
-}
-
-*/
 
 void WiFiDrv::config(uint8_t validParams, IPAddress local_ip, IPAddress gateway, IPAddress subnet) {
 
@@ -690,8 +675,7 @@ void WiFiDrv::setDNS(uint8_t validParams, IPAddress dns_server1, IPAddress dns_s
     } else {
         return;
     }
-    //IP4_ADDR(&dns, _arduinoDns1[0], _arduinoDns1[1], _arduinoDns1[2], _arduinoDns1[3]);
-    // modified here 
+
     #ifndef EXAMPLE_IPV6 
     IP4_ADDR(ip_2_ip4(&dns), _arduinoDns1[0], _arduinoDns1[1], _arduinoDns1[2], _arduinoDns1[3]);
     #else

@@ -187,13 +187,13 @@ uint8_t WiFiClass::status()
 
 int WiFiClass::hostByName(const char* aHostname, IPAddress& aResult)
 {
-    printf("[INFO]wifi.cpp: hostByNameV4\n\r");
+    printf("[INFO]wifi.cpp: hostByNamev4()\n\r");
     return WiFiDrv::getHostByName(aHostname, aResult);
 }
 
 int WiFiClass::hostByNamev6(const char* aHostname, IPv6Address& aResult)
 {
-    printf("[INFO]wifi.cpp: hostByNameV6\n\r");
+    printf("[INFO]wifi.cpp: hostByNamev6()\n\r");
     return WiFiDrv::getHostByNamev6(aHostname, aResult);
 }
 
@@ -242,9 +242,14 @@ int WiFiClass::disablePowerSave()
     return WiFiDrv::disablePowerSave();
 }
 
-void WiFiClass::enableIPv6()
+int WiFiClass::enableIPv6()
 {
-    #define EXAMPLE_IPV6 1
+    return ServerDrv::enableIPv6();
+}
+
+int WiFiClass::getIPv6Status()
+{
+    return ServerDrv::getIPv6Status();
 }
 
 void WiFiClass::config(IPAddress local_ip) {

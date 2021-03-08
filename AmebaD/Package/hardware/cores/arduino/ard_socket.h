@@ -24,6 +24,10 @@ int start_client(uint32_t ipAddress, uint16_t port, uint8_t protMode);
 
 int start_clientv6(uint32_t *ipv6Address, uint16_t port, uint8_t protMode);
 
+int enable_ipv6(void);
+
+int get_ipv6_status(void);
+
 void ipv6_tcp_client(void);
 
 void ipv6_tcp_server(void);

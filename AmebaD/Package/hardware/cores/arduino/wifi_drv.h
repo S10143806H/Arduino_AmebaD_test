@@ -280,8 +280,6 @@ class WiFiDrv
         static int8_t apActivate(uint8_t hidden_ssid);
 
         static int disablePowerSave();
-
-        //static void enableIPv6();
         
 };
 

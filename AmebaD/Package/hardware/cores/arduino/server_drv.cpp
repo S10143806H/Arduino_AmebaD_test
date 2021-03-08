@@ -135,10 +135,9 @@ int ServerDrv::startClientv6(uint32_t *ipv6Address, uint16_t port, uint8_t protM
 {
     int sock;
     sock = start_clientv6(ipv6Address, port, protMode);
-    printf("[INFO]server_drv.cpp:  sock value: %x\n\r",sock);
+    printf("\n\r[INFO]server_drv.cpp:  startClientv6() sock value: %x\n\r",sock);
     return sock;
 }
-
 
 void ServerDrv::getRemoteData(int sock, uint32_t *ip, uint16_t *port)
 {
@@ -153,6 +152,13 @@ int ServerDrv::setSockRecvTimeout(int sock, int timeout)
     return set_sock_recv_timeout(sock, timeout);
 }
 
+int ServerDrv::enableIPv6(){
+    return enable_ipv6();
+}
+
+int ServerDrv::getIPv6Status(){
+    return get_ipv6_status();
+}
 void ServerDrv::setIPv6TCPClient(void){
     ipv6_tcp_client();
 }

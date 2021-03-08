@@ -44,9 +44,15 @@ class ServerDrv
         bool sendtoData(int sock, const uint8_t *data, uint16_t len, uint32_t peer_ip, uint16_t peer_port);
 
         int availData(int sock);
+
         void getRemoteData(int sock, uint32_t *ip, uint16_t *port);
+
         int setSockRecvTimeout(int sock, int timeout);
 
+        static int enableIPv6();
+
+        static int getIPv6Status();
+        
         void setIPv6TCPClient(void);
 
         void setIPv6TCPServer(void);

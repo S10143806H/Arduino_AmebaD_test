@@ -1,32 +1,22 @@
 #include <WiFi.h>
 
-//char ssid[] = "IPv6";    // your network SSID (name)
-//char pass[] = "123456789";       // your network passwordint keyIndex = 0;            // your network key Index number (needed only for WEP)
-
-char ssid[] = "xiaomi_test";    // your network SSID (name)
-char pass[] = "1234567890";       // your network passwordint keyIndex = 0;            // your network key Index number (needed only for WEP)
-
-// char ssid[] = "SINGTEL-D45F";    // your network SSID (name)
-// char pass[] = "mooxuteeth";       // your network passwordint keyIndex = 0;            // your network key Index number (needed only for WEP)
-
-//char ssid[] = "YMJ";    // your network SSID (name)
-//char pass[] = "dll90216";       // your network passwordint keyIndex = 0;            // your network key Index number (needed only for WEP)
-
-//char* xxx[4] = {0x2001, 0x4860, 0x4860, 0x8888};
+char ssid[] = "TestTeam";    // your network SSID (name)
+char pass[] = "Testingonly";       // your network passwordint keyIndex = 0;         
 
 int status = WL_IDLE_STATUS;
 //IPAddress server(64,233,189,94);  // numeric IP for Google (no DNS)
 //IPv6Address server(xxx);  // Google Public DNS IPv6 addresses
+//char* xxx[4] = {0x2001, 0x4860, 0x4860, 0x8888};
 char server[] = "www.google.com";    // name address for Google (using DNS)
-
 WiFiClient client;
+
 void setup() {
     //Initialize serial and wait for port to open:
     Serial.begin(115200);
     while (!Serial) {
         ;
     }
-    WiFi.enableIPv6();
+
     // check for the presence of the shield:
     if (WiFi.status() == WL_NO_SHIELD) {
         Serial.println("WiFi shield not present");
@@ -46,9 +36,15 @@ void setup() {
     }
     Serial.println("Connected to wifi");
     printWifiStatus();
-    //client.TCPClientv6();
-    
+
+    // client.TCPClientv6();
+
     Serial.println("\nStarting connection to server...");
+    // Enable ipv6 function     
+    /*
+    if(client.enableIPv6()){
+        Serial.println("\nEnable IPv6 Functions");
+    }*/
     // if you get a connection, report back via serial:
     if (client.connect(server, 80)) {
         Serial.println("connected to server");
