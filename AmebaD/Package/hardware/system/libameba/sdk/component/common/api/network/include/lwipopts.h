@@ -363,7 +363,7 @@ Certain platform allows computing and verifying the IP, UDP, TCP and ICMP checks
    -----------------------------------
 */
 
-#define LWIP_DEBUG                      1
+#define LWIP_DEBUG                      0
 
 
 /*
@@ -396,7 +396,7 @@ Certain platform allows computing and verifying the IP, UDP, TCP and ICMP checks
 #define LWIP_TCPIP_TIMEOUT              1
 #define LWIP_SO_RCVTIMEO                1
 #define LWIP_SOCKET_SET_ERRNO           0
-//#undef LWIP_DEBUG
+#undef LWIP_DEBUG
 #define LWIP_RAW                        1
 #define LWIP_AUTOIP                     1
 #define TCPIP_THREAD_NAME              "TCP_IP" 

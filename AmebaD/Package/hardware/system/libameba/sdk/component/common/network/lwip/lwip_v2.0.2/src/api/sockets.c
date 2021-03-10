@@ -668,7 +668,7 @@ lwip_connect(int s, const struct sockaddr *name, socklen_t namelen)
     _rtl_printf("{LWIP]sockets.c: 3- name->sa_family == AF_UNSPEC ---\n\r");
     err = netconn_disconnect(sock->conn);
   } else {
-    _rtl_printf("{LWIP]sockets.c: 3- name->sa_family  AF_INET6   %x ---\n\r", (name->sa_family));
+    _rtl_printf("{LWIP]sockets.c: 3- name->sa_family: %x ---\n\r", (name->sa_family));
 
     ip_addr_t remote_addr;
     u16_t remote_port;
@@ -691,11 +691,9 @@ lwip_connect(int s, const struct sockaddr *name, socklen_t namelen)
 #if LWIP_IPV4 && LWIP_IPV6
     /* Dual-stack: Unmap IPv4 mapped IPv6 addresses */
 
-    _rtl_printf(" zzw      #if LWIP_IPV4 && LWIP_IPV6 \r\n");
-    _rtl_printf(" zzw      #if LWIP_IPV4 && LWIP_IPV6   %x  \r\n", IP_IS_V6_VAL(remote_addr));
-    _rtl_printf(" zzw      #if LWIP_IPV4 && LWIP_IPV6  %x   \r\n", ip6_addr_isipv4mappedipv6(ip_2_ip6(&remote_addr)));
-
-
+    _rtl_printf("[LWIP]sockets.c:  #if LWIP_IPV4 && LWIP_IPV6 \r\n");
+    _rtl_printf("[LWIP]sockets.c:  IP_IS_V6_VAL %x, IP_IS_V64_VAL x% \r\n", IP_IS_V6_VAL(remote_addr),IP_IS_V4_VAL(remote_addr));
+    _rtl_printf("[LWIP]sockets.c:  ip6_addr_isipv4mappedipv6 %x   \r\n", ip6_addr_isipv4mappedipv6(ip_2_ip6(&remote_addr)));
 
     if (IP_IS_V6_VAL(remote_addr) && ip6_addr_isipv4mappedipv6(ip_2_ip6(&remote_addr))) {
       _rtl_printf("{LWIP]sockets.c: 4- lwip_connect Dual-stack  ---\n\r");
@@ -704,16 +702,12 @@ lwip_connect(int s, const struct sockaddr *name, socklen_t namelen)
     }
 #endif /* LWIP_IPV4 && LWIP_IPV6 */
 
-     for (int i = 0; i < 4; i++) {                         // IPv6 address
-       _rtl_printf("zzzz brfor err [LWIP]sockets.c: remote_add[%x] = %x \n\r",i, remote_addr.u_addr.ip6.addr[i]);
+     for (int i = 0; i < 4; i++) { // IPv6 address
+       _rtl_printf("[LWIP]sockets.c: brfore err remote_add[%x] = %x \n\r",i, remote_addr.u_addr.ip6.addr[i]);
     }
-
-
     err = netconn_connect(sock->conn, &remote_addr, remote_port);
   }
-  
    
-  
   if (err != ERR_OK) {
     _rtl_printf("{LWIP]sockets.c: 5- lwip_connect(%x) failed, err=%d  ---\n\r", s, err);
     LWIP_DEBUGF(SOCKETS_DEBUG, ("lwip_connect(%d) failed, err=%d\n", s, err));

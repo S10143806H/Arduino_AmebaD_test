@@ -249,7 +249,7 @@
 #define CONFIG_EXAMPLE_XML				0
 
 /* For socket select example */
-#define CONFIG_EXAMPLE_SOCKET_SELECT	1
+#define CONFIG_EXAMPLE_SOCKET_SELECT	0
 
 /* For socket nonblocking connect example */
 #define CONFIG_EXAMPLE_NONBLOCK_CONNECT	0
