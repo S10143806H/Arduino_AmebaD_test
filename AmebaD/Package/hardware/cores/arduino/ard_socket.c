@@ -11,12 +11,7 @@
 #define TCP_SERVER_PORT 5003
 #define UDP_SERVER_IP "fe80:0000:0000:0000:02e0:4cff:fe10:0068"
 #define TCP_SERVER_IP "fe80:0000:0000:0000:02e0:4cff:fe10:0068"
-
-//MDNS
-#define MCAST_GROUP_PORT 5353
-#define MCAST_GROUP_IP "ff02::fb"
-
-#define IPV6_SEMA_TIMEOUT 15000
+#define TCP_SERVER_IP_TEST "2001:4860:4860::8888"
 
 static int EXAMPLE_IPV6 = 0;
 
@@ -177,26 +172,17 @@ int start_client(uint32_t ipAddress, uint16_t port, uint8_t protMode) {
         _sock = lwip_socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     } else {
         _sock = lwip_socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    }  // will give out lwip_socket() information here
-
+    } 
     if (_sock < 0) {
         printf("\r\nERROR opening socket\r\n");
         return -1;
     }
-
-    printf("\r\nLWIP_IPV4\r\n");
     struct sockaddr_in serv_addr;
     memset(&serv_addr, 0, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = ipAddress;
     serv_addr.sin_port = htons(port);
-#if 1
-    printf("serv_addr.sin_family:     %d\n\r", serv_addr.sin_family);
-    printf("serv_addr.sin_addr  :     %d\n\r", serv_addr.sin_addr.s_addr);
-    printf("serv_addr.sin_port  :     %d\n\r", serv_addr.sin_port);
-#endif
-    while (1)
-        ;
+    
     if (protMode == 0) {  //TCP MODE
         if (connect(_sock, ((struct sockaddr *)&serv_addr), sizeof(serv_addr)) == 0) {
             printf("\r\nConnect to Server successfully!\r\n");
@@ -223,95 +209,49 @@ int start_clientv6(uint32_t *ipv6Address, uint16_t port, uint8_t protMode) {
     int enable = 1;
     int timeout;
     int _sock;
-    
+    struct sockaddr_in6 serv_addr6;
+
+    //create socket    
     if (protMode == 0) {  // TCP
         _sock = lwip_socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
     } else {
         _sock = lwip_socket(AF_INET6, SOCK_DGRAM, IPPROTO_UDP);
-    }
-
+    } 
     if (_sock < 0) {
-        printf("\r\nERROR opening socket\r\n");
+        printf("\r\n[ERROR] Create socket failed\n");
         return -1;
-    }
-    /*
-#ifndef EXAMPLE_IPV6  // LWIP_IPV4
-    printf("\r\nOpening socket\r\n");
-    struct sockaddr_in serv_addr;
-    memset(&serv_addr, 0, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = *ipv6Address; // (*ipv6Address) is uint32_t type
-    serv_addr.sin_port = htons(port);
-    printf("[INFO]ard_socket.c:  serv_addr.sin_family:     %d\n\r", serv_addr.sin_family);
-    printf("[INFO]ard_socket.c:  serv_addr.sin_addr  :     %d\n\r", serv_addr.sin_addr.s_addr);
-    printf("[INFO]ard_socket.c:  serv_addr.sin_port  :     %d\n\r", serv_addr.sin_port);
+    } 
+    printf("\n\r[INFO] Create socket successfully\n");
 
-#else  // LWIP_IPV6
-*/
-    struct sockaddr_in6 serv_addr6;
-    /* initialize ipv6 socket information */
+    // initialize structure dest
     memset(&serv_addr6, 0, sizeof(serv_addr6));
-    serv_addr6.sin6_len = sizeof(serv_addr6);
-    serv_addr6.sin6_family = AF_INET6;   // family: AF_INET6
-    serv_addr6.sin6_port = htons(port);  // Transport layer portd
-    serv_addr6.sin6_flowinfo = 0;
-    //serv_addr6.sin6_scope_id = 0;                       // Set of interfaces for scope
-    //servaddr6.sin6_addr = in6addr_any;
+    serv_addr6.sin6_family = AF_INET6;  
+    serv_addr6.sin6_port = htons(port);
+    //inet_pton(AF_INET6, TCP_SERVER_IP_TEST, &(serv_addr6.sin6_addr));
     for (int xxx = 0; xxx < 4; xxx++) {  // IPv6 address
         serv_addr6.sin6_addr.un.u32_addr[xxx] = ipv6Address[xxx];
     }
-
+#if 0 // debug info
     printf("[INFO]ard_socket.c:  serv_addr6.sin6_family:     %x \n\r", serv_addr6.sin6_family);
-    //printf("[INFO]v6ard_socket.c:  serv_addr6.sin6_addr  :     %x \n\r", &ipv6Address);
     printf("[INFO]ard_socket.c:  serv_addr6.sin6_port  :     %x \n\r", serv_addr6.sin6_port);
-//#endif
-
-    //printf("ipv6Address0     %x \n\r", ipv6Address[0]);
-    //printf("ipv6Address 1    %x \n\r", ipv6Address[1]);
-    //printf("ipv6Address  2   %x \n\r", ipv6Address[2]);
-    //printf("ipv6Address   3  %x \n\r", ipv6Address[3]);
-    //printf("yyyyyyyyyyyyyyyyy0     %x \n\r", serv_addr6.sin6_addr.un.u32_addr[0]);
-    //printf("yyyyyyyyyyyyyyyyy 1    %x \n\r", serv_addr6.sin6_addr.un.u32_addr[1]);
-    //printf("yyyyyyyyyyyyyyyyy  2   %x \n\r", serv_addr6.sin6_addr.un.u32_addr[2]);
-    //printf("yyyyyyyyyyyyyyyyy   3  %x \n\r", serv_addr6.sin6_addr.un.u32_addr[3]);
-
-// LWIP_IPV4
-/*
-#ifndef EXAMPLE_IPV6  
-
+    printf("ipv6Address0     %x \n\r", ipv6Address[0]);
+    printf("ipv6Address 1    %x \n\r", ipv6Address[1]);
+    printf("ipv6Address  2   %x \n\r", ipv6Address[2]);
+    printf("ipv6Address   3  %x \n\r", ipv6Address[3]);
+    printf("yyyyyyyyyyyyyyyyy0     %x \n\r", serv_addr6.sin6_addr.un.u32_addr[0]);
+    printf("yyyyyyyyyyyyyyyyy 1    %x \n\r", serv_addr6.sin6_addr.un.u32_addr[1]);
+    printf("yyyyyyyyyyyyyyyyy  2   %x \n\r", serv_addr6.sin6_addr.un.u32_addr[2]);
+    printf("yyyyyyyyyyyyyyyyy   3  %x \n\r", serv_addr6.sin6_addr.un.u32_addr[3]);
+#endif
+    // connection starts
     if (protMode == 0) {  //TCP MODE
-        if (connect(_sock, ((struct sockaddr *)&serv_addr), sizeof(serv_addr)) == 0) {
-            printf("\r\nConnect to Server successfully!\r\n");
-            timeout = 3000;
-            lwip_setsockopt(_sock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
-            timeout = 30000;
-            lwip_setsockopt(_sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
-            lwip_setsockopt(_sock, IPPROTO_TCP, TCP_NODELAY, &enable, sizeof(enable));
-            lwip_setsockopt(_sock, SOL_SOCKET, SO_KEEPALIVE, &enable, sizeof(enable));
-            return _sock;
-        } else {
-            printf("\r\nConnect to Server failed!\r\n");
-            stop_socket(_sock);
-            return -1;
+        if (connect(_sock, (struct sockaddr *)(&serv_addr6), sizeof(serv_addr6)) == -1){
+            printf("\n\r[ERROR] Connect to server failed\n");
         }
-    } else {
-        //printf("\r\nUdp client setup Server's information successful!\r\n");
-    }
-// LWIP_IPV6
-#else  
-*/
-   printf("    zzw    LWIP_IPV6 connect starts      \n\r");
-
-    /*
-    if ((sockaddr->sa_family) == AF_INET6) {
-    SOCKADDR6_TO_IP6ADDR_PORT((const struct sockaddr_in6*)(const void*)(sockaddr), ipaddr, *port);
-    ipaddr->type = IPADDR_TYPE_V6;
-    */
-
-
-    if (protMode == 0) {  //TCP MODE
+        printf("[INFO] Connect to server successfully\n");
+    
         if (connect(_sock, (struct sockaddr *)(&serv_addr6), sizeof(serv_addr6)) == 0) {
-            printf("\r\nConnect to Server successfully!\r\n");
+            printf("\r\n[INFO] Connect to Server successfully!\r\n");
             timeout = 3000;
             lwip_setsockopt(_sock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
             timeout = 30000;
@@ -320,16 +260,13 @@ int start_clientv6(uint32_t *ipv6Address, uint16_t port, uint8_t protMode) {
             lwip_setsockopt(_sock, SOL_SOCKET, SO_KEEPALIVE, &enable, sizeof(enable));
             return _sock;
         } else {
-            printf("\r\nConnect to Server failed!\r\n");
+            printf("\r\n[ERROR] Connect to Server failed!\r\n");
             stop_socket(_sock);
             return -1;
         }
     } else {
        //printf("\r\nUdp client setup Server's information successful!\r\n");
     }
-
-//#endif
-
     return _sock;
 }
 
@@ -341,6 +278,14 @@ int enable_ipv6(void){
 int get_ipv6_status(void){
     return EXAMPLE_IPV6;
 }
+/*
+void ipv6_create_socket(int fd, int doamin, int type, int protocol){
+    fd = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
+    if (fd == -1){
+        printf("\n\r[ERROR] Create socket failed\n");
+    }
+    printf("\n\r[INFO] Create socket successfully\n");
+}*/
 
 void ipv6_tcp_client(void) {
 
@@ -348,7 +293,7 @@ void ipv6_tcp_client(void) {
     struct sockaddr_in6 ser_addr;
     char recv_data[MAX_RECV_SIZE];
     char send_data[MAX_SEND_SIZE] = "Hi Server!!";
-   
+    
     //create socket
     if ((client_fd = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP)) == -1) {
         printf("\n\r[ERROR] Create socket failed\n");
@@ -356,6 +301,7 @@ void ipv6_tcp_client(void) {
     }
     printf("\n\r[INFO] Create socket successfully\n");
    
+    //ipv6_create_socket(client_fd);
 
     //initialize value in dest
     memset(&ser_addr, 0, sizeof(ser_addr));
@@ -399,12 +345,15 @@ void ipv6_tcp_server(void) {
     char send_data[MAX_SEND_SIZE] = "Hi client!!";
     char recv_data[MAX_RECV_SIZE];
 
+    
     //create socket
     if ((server_fd = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP)) == -1) {
         printf("\n\r[ERROR] Create socket failed\n");
         return;
     }
     printf("\n\r[INFO] Create socket successfully\n");
+    
+    //ipv6_create_socket(server_fd);
 
     //initialize structure dest
     memset(&ser_addr, 0, sizeof(ser_addr));
@@ -470,6 +419,9 @@ void ipv6_udp_server(void) {
     }
     printf("\n\r[INFO] Create socket successfully\n");
 
+    //ipv6_create_socket(server_fd);
+
+    
     //initialize structure dest
     memset(&ser_addr, 0, sizeof(ser_addr));
     ser_addr.sin6_family = AF_INET6;
@@ -515,6 +467,9 @@ void ipv6_udp_client(void) {
         return;
     }
     printf("\n\r[INFO] Create socket successfully\n");
+
+
+    //ipv6_create_socket(client_fd);
 
     //initialize value in dest
     memset(&ser_addr, 0, sizeof(ser_addr));

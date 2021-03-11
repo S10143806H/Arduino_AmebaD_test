@@ -1,14 +1,14 @@
 #include <WiFi.h>
+#define TCP   1
+#define UDP   0
 
 //char ssid[] = "SINGTEL-D45F";    // your network SSID (name)
 //char pass[] = "mooxuteeth";       // your network passwordint keyIndex = 0;  
-char ssid[] = "TestTeam";    // your network SSID (name)
-char pass[] = "Testingonly";       // your network passwordint keyIndex = 0;  // your network key Index number (needed only for WEP)
+char ssid[] = "xiaomi_test";    // your network SSID (name)
+char pass[] = "1234567890";       // your network passwordint keyIndex = 0;  // your network key Index number (needed only for WEP)
 
 int status = WL_IDLE_STATUS;
-//IPAddress server(64,233,189,94);  // numeric IP for Google (no DNS)
-//IPv6Address server(2001:4860:4860::8888);  // Google Public DNS IPv6 addresses
-char server[] = "www.google.com";    // name address for Google (using DNS)
+int client_fd;
 
 WiFiClient client;
 void setup() {
@@ -38,19 +38,11 @@ void setup() {
     }
     Serial.println("Connected to wifi");
     printWifiStatus();
+
+    //client.createSocketV6(client_fd, UDP);
+    
     client.UDPClientv6();
-    /*
-    Serial.println("\nStarting connection to server...");
-    // if you get a connection, report back via serial:
-    if (client.connect(server, 80)) {
-        Serial.println("connected to server");
-        // Make a HTTP request:
-        client.println("GET /search?q=ameba HTTP/1.1");
-        client.println("Host: www.google.com");
-        client.println("Connection: close");
-        client.println();
-    }
-    delay(100);*/
+    
 }
 
 void loop() {
@@ -84,10 +76,8 @@ void printWifiStatus() {
     Serial.print("IP Address: ");
     Serial.println(ip);
 
-    // print your WiFi shield's IPv6 address:
-    IPv6Address ipv6 = WiFi.localIPv6();
-    //Serial.print("IPv6 Address: ");
-    //Serial.println(ipv6);
+  // print link local IPv6 address:
+    WiFi.printLocalIPv6();
     
     // print the received signal strength:
     long rssi = WiFi.RSSI();

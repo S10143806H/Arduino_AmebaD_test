@@ -1,22 +1,20 @@
 #include <WiFi.h>
 
-char ssid[] = "TestTeam";    // your network SSID (name)
-char pass[] = "Testingonly";       // your network passwordint keyIndex = 0;         
+char ssid[] = "yourNetwork"; //  your network SSID (name)
+char pass[] = "password";    // your network password (use for WPA, or use as key for WEP)
+int keyIndex = 0;            // your network key Index number (needed only for WEP)
 
 int status = WL_IDLE_STATUS;
 //IPAddress server(64,233,189,94);  // numeric IP for Google (no DNS)
-//IPv6Address server(xxx);  // Google Public DNS IPv6 addresses
-//char* xxx[4] = {0x2001, 0x4860, 0x4860, 0x8888};
 char server[] = "www.google.com";    // name address for Google (using DNS)
-WiFiClient client;
 
+WiFiClient client;
 void setup() {
     //Initialize serial and wait for port to open:
     Serial.begin(115200);
     while (!Serial) {
         ;
     }
-
     // check for the presence of the shield:
     if (WiFi.status() == WL_NO_SHIELD) {
         Serial.println("WiFi shield not present");
@@ -37,14 +35,7 @@ void setup() {
     Serial.println("Connected to wifi");
     printWifiStatus();
 
-    // client.TCPClientv6();
-
     Serial.println("\nStarting connection to server...");
-    // Enable ipv6 function     
-    /*
-    if(client.enableIPv6()){
-        Serial.println("\nEnable IPv6 Functions");
-    }*/
     // if you get a connection, report back via serial:
     if (client.connect(server, 80)) {
         Serial.println("connected to server");
@@ -74,7 +65,6 @@ void loop() {
         // do nothing forevermore:
         while (true);
     }
-    
 }
 
 
@@ -88,11 +78,6 @@ void printWifiStatus() {
     Serial.print("IP Address: ");
     Serial.println(ip);
 
-    // print your WiFi shield's IPv6 address:
-    //IPv6Address ipv6 = WiFi.localIPv6();
-    //Serial.print("IPv6 Address: ");
-    //Serial.println(ipv6);
-    
     // print the received signal strength:
     long rssi = WiFi.RSSI();
     Serial.print("signal strength (RSSI):");

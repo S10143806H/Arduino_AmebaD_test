@@ -28,6 +28,8 @@ class WiFiClient : public Client {
         virtual operator bool();
         int enableIPv6();
         int getIPv6Status();
+        void createSocketV6(int fd, int protocolType);
+        void closeSocketV6(int fd);
         void TCPClientv6(void);
         void TCPServerv6(void);
         void UDPClientv6(void);

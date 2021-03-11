@@ -139,10 +139,12 @@ class WiFiClass
          */
         IPAddress localIP();
 
-
-        void localIPv6();
-
-
+         /*
+         * Get the interface IPv6 address.
+         *
+         * return: Ipv6 address value
+         */
+        void printLocalIPv6();
         
         /*
          * Get the interface subnet mask address.
@@ -266,6 +268,10 @@ class WiFiClass
 
         int getIPv6Status();
 
+        void IPv6CreateSocket(int fd, int protocolType);
+
+        void IPv6CloseSocket(int fd);
+        
         friend class WiFiClient;
         friend class WiFiServer;
         friend class WiFiSSLClient;

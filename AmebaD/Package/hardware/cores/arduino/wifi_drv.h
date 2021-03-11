@@ -280,6 +280,12 @@ class WiFiDrv
         static int8_t apActivate(uint8_t hidden_ssid);
 
         static int disablePowerSave();
+
+        static int getIPv6Status();
+
+        static void ipv6CreateSocket(int fd, int protocolType);
+
+        static void ipv6CloseSocket(int fd);
         
 };
 

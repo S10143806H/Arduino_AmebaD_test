@@ -143,10 +143,8 @@ int WiFiClient::connect(const char* host, uint16_t port) {
     IPAddress remote_addr;
     IPv6Address remote_addr_v6;
    
-    if(getIPv6Status() != 1){
-         printf("[INFO]WiFiClient.cpp: connect hostByNameV4 \n\r");
+    if(getIPv6Status() == 0){
          if(WiFi.hostByName(host, remote_addr)){
-            printf("[INFO]WiFiClient.cpp: connect connectv4 \n\r");
             return connect(remote_addr, port);
         }
     }
@@ -161,17 +159,13 @@ int WiFiClient::connect(const char* host, uint16_t port) {
 }
 
 int WiFiClient::connect(IPAddress ip, uint16_t port) {
-    printf("\n\r[INFO]wifiClient.cpp: enter connectV4() \n\r");
     _is_connected = false;
     _sock = clientdrv.startClient(ip, port);
-    printf("[INFO]wifiClient.cpp: connectv4 sock value: %x\n\r",_sock);
     if (_sock < 0) {
         _is_connected = false;
-        printf("[INFO]wifiClient.cpp: connectv4 not connected\n\r");
         return 0;
     } else {
         _is_connected = true;
-        printf("[INFO]wifiClient.cpp: connectv4 connected\n\r");
         clientdrv.setSockRecvTimeout(_sock, recvTimeout);
     }
     return 1;
@@ -236,19 +230,34 @@ int WiFiClient::getIPv6Status()
     return WiFi.getIPv6Status();
 }
 
+void WiFiClient::createSocketV6(int fd, int protocolType){
+    WiFi.IPv6CreateSocket(fd, protocolType);
+}
+
+void WiFiClient::closeSocketV6(int fd){
+    WiFi.IPv6CloseSocket(fd);
+}
+
 void WiFiClient::TCPClientv6(void){
-    clientdrv.setIPv6TCPClient();
+    if(getIPv6Status()==1){
+        clientdrv.setIPv6TCPClient();
+    }
 }
 
 void WiFiClient::TCPServerv6(void){
-    clientdrv.setIPv6TCPServer();
+    if(getIPv6Status()==1){
+        clientdrv.setIPv6TCPServer();
+    }
 }
 
 void WiFiClient::UDPClientv6(void){
-    clientdrv.setIPv6UDPClient();
+    if(getIPv6Status()==1){
+        clientdrv.setIPv6UDPClient();
+    }
 }
 
 void WiFiClient::UDPServerv6(void){
-    clientdrv.setIPv6UDPServer();
+    if(getIPv6Status()==1){
+        clientdrv.setIPv6UDPServer();
+    }
 }
-

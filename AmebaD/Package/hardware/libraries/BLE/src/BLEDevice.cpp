@@ -259,7 +259,7 @@ void BLEDevice::beginPeripheral() {
     do {
         vTaskDelay(100 / portTICK_RATE_MS);
         le_get_gap_param(GAP_PARAM_DEV_STATE , &new_state);
-    }while(new_state.gap_init_state != GAP_INIT_STATE_STACK_READY);
+    } while (new_state.gap_init_state != GAP_INIT_STATE_STACK_READY);
 
     // Start BT WIFI coexistence
     wifi_btcoex_set_bt_on();

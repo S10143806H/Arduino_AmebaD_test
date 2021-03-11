@@ -28,6 +28,10 @@ int enable_ipv6(void);
 
 int get_ipv6_status(void);
 
+//void ipv6_create_socket(int fd, int protocolType);
+
+void ipv6_close_socket(int fd);
+
 void ipv6_tcp_client(void);
 
 void ipv6_tcp_server(void);

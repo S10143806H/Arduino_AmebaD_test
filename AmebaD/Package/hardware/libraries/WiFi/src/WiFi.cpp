@@ -101,7 +101,7 @@ IPAddress WiFiClass::localIP()
     return ret;
 }
 
-void WiFiClass::localIPv6()
+void WiFiClass::printLocalIPv6()
 {
     WiFiDrv::getIpv6Address();
 }
@@ -187,7 +187,6 @@ uint8_t WiFiClass::status()
 
 int WiFiClass::hostByName(const char* aHostname, IPAddress& aResult)
 {
-    printf("[INFO]wifi.cpp: hostByNamev4()\n\r");
     return WiFiDrv::getHostByName(aHostname, aResult);
 }
 
@@ -196,7 +195,6 @@ int WiFiClass::hostByNamev6(const char* aHostname, IPv6Address& aResult)
     printf("[INFO]wifi.cpp: hostByNamev6()\n\r");
     return WiFiDrv::getHostByNamev6(aHostname, aResult);
 }
-
 
 int WiFiClass::apbegin(char* ssid, char* channel, uint8_t hidden_ssid)
 {
@@ -251,6 +249,15 @@ int WiFiClass::getIPv6Status()
 {
     return ServerDrv::getIPv6Status();
 }
+
+void WiFiClass::IPv6CreateSocket(int fd, int protocolType){
+    WiFiDrv::ipv6CreateSocket(fd, protocolType);
+}
+
+void WiFiClass::IPv6CloseSocket(int fd){
+    WiFiDrv::ipv6CloseSocket(fd);
+}
+
 
 void WiFiClass::config(IPAddress local_ip) {
     WiFiDrv::config(1, local_ip, IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0));

@@ -142,7 +142,6 @@ int ServerDrv::startClientv6(uint32_t *ipv6Address, uint16_t port, uint8_t protM
 void ServerDrv::getRemoteData(int sock, uint32_t *ip, uint16_t *port)
 {
     sock = sock;
-    // TODO: These data may be outdated?
     *ip = _peer_addr;
     *port = _peer_port;
 }
