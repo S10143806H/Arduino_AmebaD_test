@@ -1,12 +1,16 @@
 #include <WiFi.h>
+#include "ard_socket.h"
 #define TCP   1
 #define UDP   0
 
-char ssid[] = "xiaomi_test";    // your network SSID (name)
-char pass[] = "1234567890";       // your network passwordint keyIndex = 0;         // your network key Index number (needed only for WEP)
+//char ssid[] = "xiaomi_test";    // your network SSID (name)
+//char pass[] = "1234567890";       // your network passwordint keyIndex = 0;         // your network key Index number (needed only for WEP)
+char ssid[] = "SINGTEL-D45F";    // your network SSID (name)
+char pass[] = "mooxuteeth";       // your network passwordint keyIndex = 0;         // your network key Index number (needed only for WEP)
 
 int status = WL_IDLE_STATUS;
-int server_fd;
+int server_fd, client_fd;
+
 
 WiFiClient client;
 
@@ -39,11 +43,15 @@ void setup() {
 
     // Enable ipv6 function     
     if(client.enableIPv6()){
-        Serial.println("\nEnable IPv6 Functions");
+        if((client.getIPv6Status()) == 1){
+            Serial.println("\nEnable IPv6 functions");
+        }
+        else{
+            Serial.println("\nFailed to enable IPv6 functions");
+        }
     }
-
-    //client.createSocketV6(server_fd, TCP);
     
+    // create socket
     client.TCPServerv6();
 
     //client.closeSocketV6();

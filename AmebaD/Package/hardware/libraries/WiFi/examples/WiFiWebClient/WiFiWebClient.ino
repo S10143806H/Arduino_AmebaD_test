@@ -9,6 +9,8 @@ int status = WL_IDLE_STATUS;
 char server[] = "www.google.com";    // name address for Google (using DNS)
 
 WiFiClient client;
+
+
 void setup() {
     //Initialize serial and wait for port to open:
     Serial.begin(115200);
@@ -28,7 +30,6 @@ void setup() {
         Serial.println(ssid);
         // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
         status = WiFi.begin(ssid, pass);
-
         // wait 10 seconds for connection:
         delay(10000);
     }
@@ -48,6 +49,7 @@ void setup() {
     delay(100);
 }
 
+
 void loop() {
     // if there are incoming bytes available
     // from the server, read them and print them:
@@ -61,7 +63,6 @@ void loop() {
         Serial.println();
         Serial.println("disconnecting from server.");
         client.stop();
-
         // do nothing forevermore:
         while (true);
     }

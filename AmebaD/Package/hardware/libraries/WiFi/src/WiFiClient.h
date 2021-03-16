@@ -16,8 +16,10 @@ class WiFiClient : public Client {
         virtual int connect(IPAddress ip, uint16_t port);
         virtual int connectv6(IPv6Address ipv6, uint16_t port);
         virtual int connect(const char *host, uint16_t port);
+        virtual int connect(uint16_t port);
         virtual size_t write(uint8_t);
         virtual size_t write(const uint8_t *buf, size_t size);
+        virtual size_t receive(const uint8_t *buf, size_t size);
         virtual int available();
         virtual int read();
         virtual int read(uint8_t *buf, size_t size);
@@ -28,8 +30,6 @@ class WiFiClient : public Client {
         virtual operator bool();
         int enableIPv6();
         int getIPv6Status();
-        void createSocketV6(int fd, int protocolType);
-        void closeSocketV6(int fd);
         void TCPClientv6(void);
         void TCPServerv6(void);
         void UDPClientv6(void);

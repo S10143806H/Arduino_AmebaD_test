@@ -107,7 +107,7 @@ void WiFiClient::stop() {
     if (_sock < 0) {
         return;
     }
-    clientdrv.stopClient(_sock);
+    clientdrv.stopSocket(_sock);
     _is_connected = false;
     _sock = -1;
 }
@@ -134,6 +134,26 @@ size_t WiFiClient::write(const uint8_t *buf, size_t size) {
 
     return size;
 }
+
+size_t WiFiClient::receive(const uint8_t *buf, size_t size) {
+    if (_sock < 0) {
+        setWriteError();
+        return 0;
+    }
+    if (size == 0) {
+        setWriteError();
+        return 0;
+    }
+
+    if (!clientdrv.recvData(_sock, buf, size)) {
+        setWriteError();
+        _is_connected = false;
+        return 0;
+    }
+
+    return size;
+}
+
 
 WiFiClient::operator bool() {
     return _sock >= 0;
@@ -168,6 +188,24 @@ int WiFiClient::connect(IPAddress ip, uint16_t port) {
         _is_connected = true;
         clientdrv.setSockRecvTimeout(_sock, recvTimeout);
     }
+    return 1;
+}
+
+int WiFiClient::connect(uint16_t port){
+    _is_connected = false;
+    if(getIPv6Status()==0){
+       printf("[INFO]WiFiClient.cpp: v4 \n\r");        
+    }
+    else{
+        printf("[INFO]WiFiClient.cpp: v6 \n\r");
+        _sock = clientdrv.startClient(0, port);
+    }
+    if (_sock < 0) {
+        _is_connected = false;
+        return 0;
+    } else {
+        _is_connected = true;
+    }  
     return 1;
 }
 
@@ -222,32 +260,24 @@ int WiFiClient::read(char *buf, size_t size) {
 
 int WiFiClient::enableIPv6()
 {
-    return WiFi.enableIPv6();
+    return clientdrv.enableIPv6();
 }
 
 int WiFiClient::getIPv6Status()
 {
-    return WiFi.getIPv6Status();
-}
-
-void WiFiClient::createSocketV6(int fd, int protocolType){
-    WiFi.IPv6CreateSocket(fd, protocolType);
-}
-
-void WiFiClient::closeSocketV6(int fd){
-    WiFi.IPv6CloseSocket(fd);
+    return clientdrv.getIPv6Status();
 }
 
 void WiFiClient::TCPClientv6(void){
-    if(getIPv6Status()==1){
+    //if(getIPv6Status()==1){
         clientdrv.setIPv6TCPClient();
-    }
+    //}
 }
 
 void WiFiClient::TCPServerv6(void){
-    if(getIPv6Status()==1){
+    //if(getIPv6Status()==1){
         clientdrv.setIPv6TCPServer();
-    }
+    //}
 }
 
 void WiFiClient::UDPClientv6(void){

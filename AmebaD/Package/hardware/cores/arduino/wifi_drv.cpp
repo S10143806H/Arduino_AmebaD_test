@@ -668,12 +668,9 @@ int WiFiDrv::getIPv6Status(){
     return get_ipv6_status();
 }
 
-void WiFiDrv::ipv6CreateSocket(int fd, int protocolType){
-    //ipv6_create_socket(fd, protocolType);
+void WiFiDrv::ipv6ListenSocket(int fd){
+   ipv6_listen_socket(fd); 
 }
 
-void WiFiDrv::ipv6CloseSocket(int fd){
-    //ipv6_close_socket(fd);
-}
 
 

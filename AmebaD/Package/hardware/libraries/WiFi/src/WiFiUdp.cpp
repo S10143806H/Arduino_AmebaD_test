@@ -73,7 +73,7 @@ void WiFiUDP::stop()
         return;
     }
 
-    serverDrv.stopClient(_sock);
+    serverDrv.stopSocket(_sock);
 
     _sock = -1;
 }
@@ -110,7 +110,7 @@ int WiFiUDP::beginPacket(IPAddress ip, uint16_t port)
 int WiFiUDP::endPacket()
 {
     if (_client_sock >= 0 && _client_sock != _sock) {
-        serverDrv.stopClient(_client_sock);
+        serverDrv.stopSocket(_client_sock);
     }
 
     peer_ip = 0;

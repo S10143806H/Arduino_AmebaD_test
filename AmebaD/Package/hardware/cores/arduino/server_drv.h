@@ -33,7 +33,7 @@ class ServerDrv
         int startClientv6(uint32_t *ipv6Address, uint16_t port, uint8_t protMode = TCP_MODE);
         
         int getLastErrno(int sock);
-        void stopClient(int sock);
+        void stopSocket(int sock);
         bool getData(int sock, uint8_t *data, uint8_t peek = 0);
         int getDataBuf(int sock, uint8_t *_data, uint16_t _dataLen);
 
@@ -42,6 +42,8 @@ class ServerDrv
 
         /* Usually used by UDP */
         bool sendtoData(int sock, const uint8_t *data, uint16_t len, uint32_t peer_ip, uint16_t peer_port);
+
+        bool recvData(int sock, const uint8_t *data, uint16_t len);
 
         int availData(int sock);
 

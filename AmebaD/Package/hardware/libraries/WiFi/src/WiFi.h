@@ -264,13 +264,6 @@ class WiFiClass
 
         int disablePowerSave();
 
-        int enableIPv6();
-
-        int getIPv6Status();
-
-        void IPv6CreateSocket(int fd, int protocolType);
-
-        void IPv6CloseSocket(int fd);
         
         friend class WiFiClient;
         friend class WiFiServer;

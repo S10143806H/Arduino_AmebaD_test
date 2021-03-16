@@ -283,9 +283,8 @@ class WiFiDrv
 
         static int getIPv6Status();
 
-        static void ipv6CreateSocket(int fd, int protocolType);
+        static void ipv6ListenSocket(int fd);
 
-        static void ipv6CloseSocket(int fd);
         
 };
 

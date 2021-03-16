@@ -14,23 +14,29 @@ int get_sock_errno(int sock);
 
 int set_sock_recv_timeout(int sock, int timeout);
 
-void stop_socket(int sock);
+void close_socket(int sock);
 
-int send_data(int sock, const uint8_t *data, uint16_t len);
+int send_data(int sock, const uint8_t *data, uint16_t len, int flag);
 
 int sendto_data(int sock, const uint8_t *data, uint16_t len, uint32_t peer_ip, uint16_t peer_port);
+
+int receive_data(int sock, void *mem, size_t len, int flags);
 
 int start_client(uint32_t ipAddress, uint16_t port, uint8_t protMode);
 
 int start_clientv6(uint32_t *ipv6Address, uint16_t port, uint8_t protMode);
 
+int start_server_v6(uint16_t port, uint8_t protMode);
+
+int start_client_v6(uint16_t port, uint8_t protMode);
+
 int enable_ipv6(void);
 
 int get_ipv6_status(void);
 
-//void ipv6_create_socket(int fd, int protocolType);
+void ipv6_listen_socket(int fd);
 
-void ipv6_close_socket(int fd);
+int ipv6_accept_socket(int server_fd, int client_fd);
 
 void ipv6_tcp_client(void);
 

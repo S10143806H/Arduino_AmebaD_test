@@ -1,18 +1,21 @@
 #include <WiFi.h>
 
-char ssid[] = "yourNetwork";    // your network SSID (name)
-char pass[] = "Password";       // your network password
+char ssid[] = "yourNetwork";    //  your network SSID (name)
+char pass[] = "password";       // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;               // your network key Index number (needed only for WEP)
 
 int status = WL_IDLE_STATUS;
 
 WiFiServer server(80);
+
+
 void setup() {
-    //Initialize serial and wait for port to open:
+    // Initialize serial and wait for port to open:
     Serial.begin(115200);
     while (!Serial) {
         ; // wait for serial port to connect. Needed for native USB port only
     }
+
     // check for the presence of the shield:
     if (WiFi.status() == WL_NO_SHIELD) {
         Serial.println("WiFi shield not present");
@@ -26,11 +29,11 @@ void setup() {
         Serial.println(ssid);
         // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
         status = WiFi.begin(ssid, pass);
-
         // wait 10 seconds for connection:
         delay(10000);
     }
     server.begin();
+
     // you're connected now, so print out the status:
     printWifiStatus();
 }
@@ -41,6 +44,7 @@ void loop() {
     WiFiClient client = server.available();
     if (client) {
         Serial.println("new client");
+
         // an http request ends with a blank line
         boolean currentLineIsBlank = true;
         while (client.connected()) {
@@ -51,7 +55,8 @@ void loop() {
                 // character) and the line is blank, the http request has ended,
                 // so you can send a reply
                 if (c == '\n' && currentLineIsBlank) {
-                    // send a standard http response header
+
+                // send a standard http response header
                     client.println("HTTP/1.1 200 OK");
                     client.println("Content-Type: text/html");
                     client.println("Connection: close");  // the connection will be closed after completion of the response
@@ -59,6 +64,7 @@ void loop() {
                     client.println();
                     client.println("<!DOCTYPE HTML>");
                     client.println("<html>");
+
                     // output the value of each analog input pin
                     for (int analogChannel = 0; analogChannel < 6; analogChannel++) {
                         int sensorReading = analogRead(analogChannel);
@@ -80,6 +86,7 @@ void loop() {
                 }
             }
         }
+
         // give the web browser time to receive the data
         delay(1);
 

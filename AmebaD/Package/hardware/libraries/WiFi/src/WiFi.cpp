@@ -240,25 +240,6 @@ int WiFiClass::disablePowerSave()
     return WiFiDrv::disablePowerSave();
 }
 
-int WiFiClass::enableIPv6()
-{
-    return ServerDrv::enableIPv6();
-}
-
-int WiFiClass::getIPv6Status()
-{
-    return ServerDrv::getIPv6Status();
-}
-
-void WiFiClass::IPv6CreateSocket(int fd, int protocolType){
-    WiFiDrv::ipv6CreateSocket(fd, protocolType);
-}
-
-void WiFiClass::IPv6CloseSocket(int fd){
-    WiFiDrv::ipv6CloseSocket(fd);
-}
-
-
 void WiFiClass::config(IPAddress local_ip) {
     WiFiDrv::config(1, local_ip, IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0));
 }
